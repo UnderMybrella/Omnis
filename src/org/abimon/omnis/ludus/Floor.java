@@ -70,6 +70,7 @@ public class Floor implements Cloneable{
 		return shortestTime;
 	}
 
+	@Override
 	public String toString(){
 		return "Floor: " + floorName;
 	}

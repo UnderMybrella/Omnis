@@ -17,8 +17,7 @@ public class NagitosHopeMachine {
 		Data data = Ludus.getDataUnsafe("resources/GrassSpiral.png");
 		System.out.println(data);
 		
-		for(Tile tile : Tile.tiles)
-			tile.reloadIcon();
+		Ludus.reloadIcons();
 		
 		Floor floor = new Floor("Floor #1");
 		Floor copy = floor.clone();

@@ -1,17 +1,14 @@
 package org.abimon.omnis.ludus;
 
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 
 public class Tile implements Cloneable{
 	
-	String unlocalised;
-	String resourceLocation;
-	String uniqueTileName;
+	final String unlocalised;
+	final String resourceLocation;
+	final String uniqueTileName;
 	
 	BufferedImage icon;
-	
-	public static LinkedList<Tile> tiles = new LinkedList<Tile>();
 	
 	public Tile(String uniqueTileName, String unlocalised, String resourceLocation){
 		this.unlocalised = unlocalised;
@@ -19,7 +16,7 @@ public class Tile implements Cloneable{
 		
 		this.uniqueTileName = uniqueTileName;
 		
-		tiles.add(this);
+		Ludus.registerTile(uniqueTileName, this);
 	}
 	
 	public void reloadIcon(){
@@ -36,9 +33,7 @@ public class Tile implements Cloneable{
 	}
 	
 	public Tile clone(){
-		Tile tile = new Tile(uniqueTileName, unlocalised, resourceLocation);
-		tile.reloadIcon();
-		return tile;
+		return this;
 	}
 	
 	public int hashCode(){

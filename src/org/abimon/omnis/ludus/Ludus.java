@@ -2,6 +2,7 @@ package org.abimon.omnis.ludus;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.abimon.omnis.io.ClassLoaderDataPool;
@@ -14,6 +15,33 @@ public class Ludus
 	private static LinkedList<DataPool> dataPools = new LinkedList<DataPool>();
 
 	/**
+	 * Tile Registry
+	 * Key is a unique string
+	 * Value is a Tile
+	 */
+	private static HashMap<String, Tile> tileRegistry = new HashMap<String, Tile>();
+
+	/**
+	 * Register a tile. Allows for overriding of existing tiles.
+	 * @param name The name to register the tile under
+	 * @param tile The tile to register
+	 */
+	public static void registerTile(String name, Tile tile){
+		tileRegistry.put(name, tile);
+	}
+
+	/**
+	 * Get a registered tile
+	 * @param name The name that the tile we are retrieving is under
+	 * @return The tile registered for the name provided. May return null if there is no tile registered for the name.
+	 */
+	public static Tile getRegisteredTile(String name){
+		if(tileRegistry.containsKey(name))
+			return tileRegistry.get(name).clone();
+		return null;
+	}
+
+	/**
 	 * Adds a class loader to the available data pools. 
 	 * Make sure not to add the same class loader multiple times, as that may result in weird bugs
 	 * @param loader The loader that will get added to the data pool collection
@@ -21,6 +49,11 @@ public class Ludus
 	public static void registerDataPool(ClassLoader loader){
 		DataPool pool = new ClassLoaderDataPool(loader);
 		dataPools.add(pool);
+	}
+
+	public static void reloadIcons(){
+		for(String tileKey : tileRegistry.keySet())
+			tileRegistry.get(tileKey).reloadIcon();
 	}
 	
 	/**
