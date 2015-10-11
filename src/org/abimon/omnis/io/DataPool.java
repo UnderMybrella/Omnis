@@ -1,5 +1,7 @@
 package org.abimon.omnis.io;
 
+import java.io.IOException;
+
 /** 
  * The Datapool interface allows access to files from a central location. 
  * This location may be a classloader, a directory, or other creative locations.
@@ -16,8 +18,9 @@ public interface DataPool
 	
 	/**
 	 * Get the data corresponding to the key 'name' 
-	 * @param name
-	 * @return
+	 * @param name The 'key' for the data
+	 * @return the Data corresponding to key 'name', or null if the pool doesn't contain an object for the key 'name'
+	 * @throws IOException if there is an IOException while reading the data
 	 */
-	public Data getData(String name);
+	public Data getData(String name) throws IOException;
 }
