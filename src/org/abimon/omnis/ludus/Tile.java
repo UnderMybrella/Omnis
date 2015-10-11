@@ -43,4 +43,8 @@ public class Tile implements Cloneable{
 	public boolean equals(Object object){
 		return hashCode() == object.hashCode();
 	}
+	
+	public String toString(){
+		return uniqueTileName;
+	}
 }

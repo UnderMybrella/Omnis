@@ -2,6 +2,7 @@ package org.abimon.omnis.ludus;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.abimon.omnis.util.ExtraArrays;
@@ -36,13 +37,38 @@ public class Floor implements Cloneable{
 
 		Graphics2D graphics = (Graphics2D) floorImage.getGraphics();
 
-		for(Tile[][] layer : floor.values()){
+		for(int layerNo = 0; layerNo < floor.size(); layerNo++){
+			Tile[][] layer = floor.get(layerNo);
+			BufferedImage img = new BufferedImage(floorImage.getWidth(), floorImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) img.getGraphics();
 			for(int x = 0; x < layer.length; x++)
 				for(int y = 0; y < layer[x].length; y++)
 					if(layer[x][y] != null)
+					{
 						graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
-
+						g.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
+					}
+			imageLayers.put(layerNo, img);
 		}
+	}
+
+	HashMap<Integer, BufferedImage> imageLayers = new HashMap<Integer, BufferedImage>();
+
+	public void rerender(int layerNo){
+		floorImage = new BufferedImage(getTileWidth() * FLOOR_SCALE_X, getTileHeight() * FLOOR_SCALE_Y, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D graphics = (Graphics2D) floorImage.getGraphics();
+
+		Tile[][] layer = getLayer(layerNo);
+		for(int i = 0; i < layerNo; i++)
+			graphics.drawImage(imageLayers.get(i), 0, 0, null);
+		for(int x = 0; x < layer.length; x++)
+			for(int y = 0; y < layer[x].length; y++)
+				if(layer[x][y] != null)
+					graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
+
+		for(int i = layerNo + 1; i < floor.size(); i++)
+			graphics.drawImage(imageLayers.get(i), 0, 0, null);
 	}
 
 	public int getTileWidth() {
@@ -69,6 +95,27 @@ public class Floor implements Cloneable{
 					if(tile != null)
 						if(tile.getReloadTime() < shortestTime)
 							shortestTime = tile.getReloadTime();
+		return Math.max(shortestTime, 10000);
+	}
+	
+	public long getReloadTimeUnconditional(){
+		long shortestTime = Long.MAX_VALUE;
+		for(Tile[][] layer : floor.values())
+			for(Tile[] row : layer)
+				for(Tile tile : row)
+					if(tile != null)
+						if(tile.getReloadTime() < shortestTime)
+							shortestTime = tile.getReloadTime();
+		return shortestTime;
+	}
+
+	public long getReloadTime(int layer){
+		long shortestTime = Long.MAX_VALUE;
+		for(Tile[] row : this.getLayer(layer))
+			for(Tile tile : row)
+				if(tile != null)
+					if(tile.getReloadTime() < shortestTime)
+						shortestTime = tile.getReloadTime();
 		return shortestTime;
 	}
 
@@ -82,7 +129,6 @@ public class Floor implements Cloneable{
 		HashMap<Integer, Tile[][]> floorData = new HashMap<Integer, Tile[][]>();
 		for(Integer i : floor.keySet())
 			floorData.put(i, ExtraArrays.deepCopyOf(floor.get(i), Tile.class));
-		System.out.println(floorData.get(0));
 		copy.floor = floorData;
 		return copy;
 	}

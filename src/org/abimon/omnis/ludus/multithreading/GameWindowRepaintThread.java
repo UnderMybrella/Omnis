@@ -7,6 +7,7 @@ public class GameWindowRepaintThread extends Thread {
 	GameWindow window;
 
 	public GameWindowRepaintThread(GameWindow window){
+		super("Repainting Thread");
 		this.window = window;
 	}
 
@@ -14,7 +15,7 @@ public class GameWindowRepaintThread extends Thread {
 		while(true){
 			try{
 				window.repaint();
-				Thread.sleep(500);
+				//Thread.sleep(window.getFloor().getReloadTimeUnconditional());
 			}
 			catch(Throwable th){}
 		}

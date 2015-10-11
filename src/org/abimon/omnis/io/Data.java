@@ -80,4 +80,16 @@ public class Data {
 		}
 		return null;
 	}
+	
+	public String getAsString(){
+		return new String(data);
+	}
+	
+	public String[] getAsStringArray(){
+		return getAsStringArray("\n");
+	}
+	
+	public String[] getAsStringArray(String splitter){
+		return new String(data).split(splitter);
+	}
 }

@@ -6,7 +6,9 @@ public class FloorReloadThread extends Thread{
 
 	volatile Floor floor;
 
-	public FloorReloadThread(){}
+	public FloorReloadThread(){
+		super("Floor Reload");
+	}
 	
 	public FloorReloadThread(Floor floor){
 		this.floor = floor;
