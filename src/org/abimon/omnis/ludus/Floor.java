@@ -9,8 +9,8 @@ import org.abimon.omnis.util.ExtraArrays;
 public class Floor implements Cloneable{
 	HashMap<Integer, Tile[][]> floor = new HashMap<Integer, Tile[][]>();
 
-	final int FLOOR_SCALE_X = 16;
-	final int FLOOR_SCALE_Y = 16;
+	final int FLOOR_SCALE_X = 32;
+	final int FLOOR_SCALE_Y = 32;
 
 	BufferedImage floorImage;
 
@@ -39,7 +39,8 @@ public class Floor implements Cloneable{
 		for(Tile[][] layer : floor.values()){
 			for(int x = 0; x < layer.length; x++)
 				for(int y = 0; y < layer[x].length; y++)
-					graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
+					if(layer[x][y] != null)
+						graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
 
 		}
 	}
@@ -65,8 +66,9 @@ public class Floor implements Cloneable{
 		for(Tile[][] layer : floor.values())
 			for(Tile[] row : layer)
 				for(Tile tile : row)
-					if(tile.getReloadTime() < shortestTime)
-						shortestTime = tile.getReloadTime();
+					if(tile != null)
+						if(tile.getReloadTime() < shortestTime)
+							shortestTime = tile.getReloadTime();
 		return shortestTime;
 	}
 

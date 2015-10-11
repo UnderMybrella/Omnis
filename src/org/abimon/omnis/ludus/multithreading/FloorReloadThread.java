@@ -4,8 +4,10 @@ import org.abimon.omnis.ludus.Floor;
 
 public class FloorReloadThread extends Thread{
 
-	Floor floor;
+	volatile Floor floor;
 
+	public FloorReloadThread(){}
+	
 	public FloorReloadThread(Floor floor){
 		this.floor = floor;
 	}
@@ -17,6 +19,7 @@ public class FloorReloadThread extends Thread{
 	public void run(){
 		while(true){
 			if(floor != null){
+				floor.rerender();
 				Floor copy = floor.clone();
 				long sleepyTime = floor.getReloadTime();
 				for(long i = 0L; i < sleepyTime / 1000L; i+=100L)

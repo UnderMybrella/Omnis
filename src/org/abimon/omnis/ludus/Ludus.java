@@ -13,6 +13,8 @@ import org.abimon.omnis.io.FolderDataPool;
 public class Ludus 
 {
 	private static LinkedList<DataPool> dataPools = new LinkedList<DataPool>();
+	
+	public static GameWindow mainWindow = new GameWindow();
 
 	/**
 	 * Tile Registry
