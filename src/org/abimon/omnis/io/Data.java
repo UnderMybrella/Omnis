@@ -1,5 +1,7 @@
 package org.abimon.omnis.io;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,20 +11,22 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import javax.imageio.ImageIO;
+
 /** The Data class is capable of holding standard amounts of data (Up tp ~2 GB) 
  * @author Undermybrella
  */
 public class Data {
-	
+
 	private final byte[] data;
-	
+
 	/** 
 	 * Creates an empty data object. Only 1 kB of data is storable in this instance 
 	 */
 	public Data(){
 		data = new byte[1000];
 	}
-	
+
 	/** 
 	 * Creates a data object from the contents of the file. 
 	 * @throws IOException
@@ -33,13 +37,13 @@ public class Data {
 		in.read(data);
 		in.close();
 	}
-	
+
 	public Data(InputStream in) throws IOException{
 		data = new byte[in.available()];
 		in.read(data);
 		in.close();
 	}
-	
+
 	/** Creates a data object by writing the object passed to the internal array 
 	 * @throws IOException 
 	 */
@@ -51,12 +55,29 @@ public class Data {
 		out.close();
 		data = bOut.toByteArray();
 	}
-	
+
 	public byte[] toArray(){
 		return Arrays.copyOf(data, data.length);
 	}
-	
+
 	public String toString(){
 		return data.length + " bytes of data stored";
+	}
+
+	//TODO: Data conversion
+
+	/**
+	 * Returns the data contained in this Data objects buffer as a BufferedImage
+	 * @return the data as a BufferedImage, or null if an error occurred, such as the data not being an image
+	 */
+	public BufferedImage getAsImage(){
+		try {
+			BufferedImage img = ImageIO.read(new ByteArrayInputStream(toArray()));
+			return img;
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
