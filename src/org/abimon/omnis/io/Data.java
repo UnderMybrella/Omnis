@@ -8,7 +8,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 
-/** The Data class is capable of holding standard amounts of data (Up tp ~2 GB) */
+/** The Data class is capable of holding standard amounts of data (Up tp ~2 GB) 
+ * @author Undermybrella
+ */
 public class Data {
 	
 	private byte[] data;
