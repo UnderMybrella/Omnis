@@ -2,7 +2,6 @@ package org.abimon.omnis.ludus;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import org.abimon.omnis.util.ExtraArrays;
@@ -30,6 +29,10 @@ public class Floor implements Cloneable{
 
 	public void setLayer(int layer, Tile[][] tileLayer){
 		floor.put(layer, tileLayer);
+	}
+	
+	public BufferedImage getImage(){
+		return floorImage;
 	}
 
 	public void rerender(){

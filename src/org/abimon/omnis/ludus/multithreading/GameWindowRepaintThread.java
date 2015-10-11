@@ -15,7 +15,13 @@ public class GameWindowRepaintThread extends Thread {
 		while(true){
 			try{
 				window.repaint();
-				//Thread.sleep(window.getFloor().getReloadTimeUnconditional());
+				//Thread.sleep(1000);
+				if(window.getFloor() != null)
+					if(window.getFloor().getImage() != null)
+					{
+						Thread.sleep(window.getFloor().getReloadTimeUnconditional());
+						System.out.println(window.getFloor().getReloadTimeUnconditional());
+					}
 			}
 			catch(Throwable th){}
 		}

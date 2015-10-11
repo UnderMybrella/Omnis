@@ -13,7 +13,9 @@ public class NagitosHopeMachine {
 	public static Tile air = new Tile("NHM:air", "air", "");
 	public static Tile grass = new Tile("NHM:grass", "grass", "resources/Grass.png");
 	public static Tile rock = new Tile("NHM:rock", "rock", "resources/Rock.png");
-	//public static Tile flower = new AnimatedTile("NHM:flower", "flower", "resources/flower.ani");
+	public static Tile flower = new AnimatedTile("NHM:flower", "flower", "resources/flower.ani");
+	public static Tile sea = new AnimatedTile("NHM:seaAnimated", "sea", "resources/sea.ani");
+	//public static Tile sea = new Tile("NHM:sea", "sea", "resources/sea.png");
 	
 	public static void main(String[] args){
 		Ludus.registerDataPool(NagitosHopeMachine.class.getClassLoader());
@@ -22,9 +24,9 @@ public class NagitosHopeMachine {
 		Ludus.reloadIcons();
 		
 		Floor floor = new Floor("Floor #1");
-		floor.setLayer(LayerList.BACKGROUND_LAYER, new Tile[][]{{grass, grass, grass}, {grass, grass, grass}, {grass, grass, grass}});
+		floor.setLayer(LayerList.BACKGROUND_LAYER, new Tile[][]{{sea, sea, sea}, {sea, sea, sea}, {sea, sea, sea}});
 		floor.setLayer(LayerList.FOREGROUND_LAYER, new Tile[][]{{air, air, air}, {air, rock, air}, {air, air, air}});
-		//floor.setLayer(LayerList.ANIMATED_FOREGROUND_LAYER, new Tile[][]{{air, flower, air}, {air, air, air}, {air, flower, air}});
+		floor.setLayer(LayerList.ANIMATED_FOREGROUND_LAYER, new Tile[][]{{air, flower, air}, {air, air, air}, {air, flower, air}});
 
 		Ludus.mainWindow.setFloor(floor);
 	}

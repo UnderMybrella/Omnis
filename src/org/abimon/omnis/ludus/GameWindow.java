@@ -13,7 +13,7 @@ import org.abimon.omnis.ludus.multithreading.LayerReloadThread;
 public class GameWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private Floor floor;
+	private volatile Floor floor;
 	
 	public GameWindowRepaintThread thread;
 	public FloorReloadThread floorThread;
@@ -31,12 +31,12 @@ public class GameWindow extends JFrame {
 		floorThread = new FloorReloadThread();
 		floorThread.start();
 		
-//		for(int i = 0; i < 3; i++)
-//		{
-//			LayerReloadThread thread = new LayerReloadThread(i);
-//			thread.start();
-//			layerThreads.add(thread);
-//		}
+		for(int i = 0; i < 3; i++)
+		{
+			LayerReloadThread thread = new LayerReloadThread(i);
+			thread.start();
+			layerThreads.add(thread);
+		}
 	}
 	
 	public void setFloor(Floor floor){
