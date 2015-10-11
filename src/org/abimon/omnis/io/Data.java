@@ -14,7 +14,7 @@ import java.util.Arrays;
  */
 public class Data {
 	
-	private byte[] data;
+	private final byte[] data;
 	
 	/** 
 	 * Creates an empty data object. Only 1 kB of data is storable in this instance 
@@ -54,5 +54,9 @@ public class Data {
 	
 	public byte[] toArray(){
 		return Arrays.copyOf(data, data.length);
+	}
+	
+	public String toString(){
+		return data.length + " bytes of data stored";
 	}
 }

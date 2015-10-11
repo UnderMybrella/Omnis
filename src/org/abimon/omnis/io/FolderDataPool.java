@@ -20,7 +20,9 @@ public class FolderDataPool implements DataPool{
 		if(folder.isDirectory())
 			for(File f : folder.listFiles()){
 				try{
-					if(f.getName().equals(name) || f.getName().startsWith(name) || f.getName().matches(name))
+					if(f.getPath().equals(name) || f.getPath().startsWith(name) || f.getPath().matches(name))
+						return f;
+					if(f.getPath().equals(folder.getPath() + File.separator + name) || f.getPath().startsWith(folder.getPath() + File.separator + name) || f.getPath().matches(folder.getPath() + File.separator + name))
 						return f;
 				}
 				catch(Throwable th){}
