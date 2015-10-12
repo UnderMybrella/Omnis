@@ -28,6 +28,14 @@ public class Tile implements Cloneable{
 		return icon;
 	}
 	
+	/**
+	 * Used to identify this tile when reading data from a tileset
+	 * @return The image used to properly identify this tile
+	 */
+	public BufferedImage getTileIcon(){
+		return icon;
+	}
+	
 	public long getReloadTime(){
 		return Long.MAX_VALUE;
 	}
@@ -46,5 +54,13 @@ public class Tile implements Cloneable{
 	
 	public String toString(){
 		return uniqueTileName;
+	}
+	
+	public int getWidthUnscaled(){
+		return 1;
+	}
+	
+	public int getHeightUnscaled(){
+		return 1;
 	}
 }

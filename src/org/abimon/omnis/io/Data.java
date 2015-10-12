@@ -43,6 +43,10 @@ public class Data {
 		in.read(data);
 		in.close();
 	}
+	
+	public Data(String str){
+		data = str.getBytes();
+	}
 
 	/** Creates a data object by writing the object passed to the internal array 
 	 * @throws IOException 
@@ -91,5 +95,9 @@ public class Data {
 	
 	public String[] getAsStringArray(String splitter){
 		return new String(data).split(splitter);
+	}
+	
+	public InputStream getAsInputStream(){
+		return new ByteArrayInputStream(data);
 	}
 }

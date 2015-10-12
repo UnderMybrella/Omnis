@@ -64,6 +64,13 @@ public class AnimatedTile extends Tile {
 		}
 		return delays.get(step).img;
 	}
+	
+	@Override
+	public BufferedImage getTileIcon(){
+		if(delays.isEmpty())
+			return null;
+		return delays.peek().img;
+	}
 
 	public long getReloadTime(){
 		if(step < 0)

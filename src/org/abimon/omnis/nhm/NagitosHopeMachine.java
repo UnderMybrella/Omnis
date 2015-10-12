@@ -2,11 +2,14 @@ package org.abimon.omnis.nhm;
 
 import java.io.File;
 
+import org.abimon.omnis.io.Data;
+import org.abimon.omnis.io.ZipData;
 import org.abimon.omnis.ludus.AnimatedTile;
 import org.abimon.omnis.ludus.Floor;
 import org.abimon.omnis.ludus.LayerList;
 import org.abimon.omnis.ludus.Ludus;
 import org.abimon.omnis.ludus.Tile;
+import org.abimon.omnis.ludus.Tiled;
 
 public class NagitosHopeMachine {
 	
@@ -20,8 +23,22 @@ public class NagitosHopeMachine {
 	public static void main(String[] args){
 		Ludus.registerDataPool(NagitosHopeMachine.class.getClassLoader());
 		Ludus.registerDataPool(new File("resources"));
+		Ludus.registerDataPool(new File("maps"));
 		
 		Ludus.reloadIcons();
+		
+		try {
+			Tiled.tiledToZipData("maps/simple.tmx");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Floor tmx = Floor.loadFromFile("maps/simple.txt");
+		System.out.println(tmx);
+		
+		ZipData zip = new ZipData();
+		zip.put("Awesome People.txt", new Data("Isaac D. Henby\nJaidyn Levanic\nNot Dean"));
+		zip.writeToFileUnsafe("Confidential.zip");
 		
 		Floor floor = new Floor("Floor #1");
 		floor.setLayer(LayerList.BACKGROUND_LAYER, new Tile[][]{{sea, sea, sea}, {sea, sea, sea}, {sea, sea, sea}});

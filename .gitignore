@@ -2,3 +2,5 @@
 /.project
 /.classpath
 /resources/
+/maps/
+.gitignore~

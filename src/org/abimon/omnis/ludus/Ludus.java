@@ -1,5 +1,6 @@
 package org.abimon.omnis.ludus;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import org.abimon.omnis.io.ClassLoaderDataPool;
 import org.abimon.omnis.io.Data;
 import org.abimon.omnis.io.DataPool;
 import org.abimon.omnis.io.FolderDataPool;
+import org.abimon.omnis.util.General;
 
 public class Ludus 
 {
@@ -40,6 +42,13 @@ public class Ludus
 	public static Tile getRegisteredTile(String name){
 		if(tileRegistry.containsKey(name))
 			return tileRegistry.get(name).clone();
+		return null;
+	}
+	
+	public static Tile getTileForImage(BufferedImage img){
+		for(Tile tile : tileRegistry.values())
+			if(General.equal(tile.getTileIcon(), img))
+				return tile;
 		return null;
 	}
 

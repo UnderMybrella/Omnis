@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+import org.abimon.omnis.io.Data;
 import org.abimon.omnis.util.ExtraArrays;
 
 public class Floor implements Cloneable{
@@ -21,6 +22,24 @@ public class Floor implements Cloneable{
 		setLayer(LayerList.BACKGROUND_LAYER, new Tile[1][1]);
 	}
 
+	public static Floor loadFromFile(String file){
+		try{
+			if(!Ludus.hasData(file))
+				return null;
+			else
+			{
+				Data data = Ludus.getDataUnsafe(file);
+				if(data == null)
+					return null;
+				return null;
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public Tile[][] getLayer(int layer){
 		if(!floor.containsKey(layer))
 			floor.put(layer, new Tile[0][0]);
@@ -30,7 +49,7 @@ public class Floor implements Cloneable{
 	public void setLayer(int layer, Tile[][] tileLayer){
 		floor.put(layer, tileLayer);
 	}
-	
+
 	public BufferedImage getImage(){
 		return floorImage;
 	}
@@ -100,7 +119,7 @@ public class Floor implements Cloneable{
 							shortestTime = tile.getReloadTime();
 		return Math.max(shortestTime, 10000);
 	}
-	
+
 	public long getReloadTimeUnconditional(){
 		long shortestTime = Long.MAX_VALUE;
 		for(Tile[][] layer : floor.values())
