@@ -33,12 +33,8 @@ public class NagitosHopeMachine {
 			e.printStackTrace();
 		}
 		
-		Floor tmx = Floor.loadFromFile("maps/simple.txt");
-		System.out.println(tmx);
-		
-		ZipData zip = new ZipData();
-		zip.put("Awesome People.txt", new Data("Isaac D. Henby\nJaidyn Levanic\nNot Dean"));
-		zip.writeToFileUnsafe("Confidential.zip");
+//		Floor tmx = Floor.loadFromFile("maps/simple.txt");
+//		System.out.println(tmx);
 		
 		Floor floor = new Floor("Floor #1");
 		floor.setLayer(LayerList.BACKGROUND_LAYER, new Tile[][]{{sea, sea, sea}, {sea, sea, sea}, {sea, sea, sea}});

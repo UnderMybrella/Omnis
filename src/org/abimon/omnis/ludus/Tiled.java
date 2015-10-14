@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import org.abimon.omnis.io.Data;
 import org.abimon.omnis.io.ZipData;
 import org.abimon.omnis.util.General;
 
@@ -16,24 +17,27 @@ public class Tiled {
 	public static final char[] LIBRARY = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
 
 	public static ZipData tiledToZipData(String tiledFile) throws Exception{
-		String tiledString = "";
-		String tiledKey = "";
 		TMXMapReader reader = new TMXMapReader();
 		Map map = reader.readMap(tiledFile);
 		ZipData data = new ZipData();
 		HashMap<String, String> uniqueIDCollection = new HashMap<String, String>();
 		LinkedList<Integer> uniquePhrase = new LinkedList<Integer>();
-		uniquePhrase.add(0);
+		uniquePhrase.add(-1);
 		for(int i = 0; i < Math.min(map.getLayerCount(), LayerList.LAYER_COUNT); i++)
 			if(map.getLayer(i) != null)
 				if(map.getLayer(i) instanceof TileLayer)
 				{
+					String layerString = "";
 					TileLayer layer = (TileLayer) map.getLayer(i);
 					for(int x = 0; x < layer.getWidth(); x++)
 						for(int y = 0; y < layer.getHeight(); y++)
 						{	
-							BufferedImage img = General.toBufferedImage(layer.getTileAt(x, y).getImage());
-							Tile tile = Ludus.getTileForImage(img);
+							Tile tile = Ludus.getAirTile();
+							if(layer.getTileAt(x, y) != null)
+							{
+								BufferedImage img = General.toBufferedImage(layer.getTileAt(x, y).getImage());
+								tile = Ludus.getTileForImage(img);
+							}
 							if(!uniqueIDCollection.containsKey(tile.uniqueTileName))
 							{
 								System.out.println("Found " + tile);
@@ -65,7 +69,9 @@ public class Tiled {
 									phrase += LIBRARY[j];
 								uniqueIDCollection.put(tile.uniqueTileName, phrase);
 							}
+							layerString += uniqueIDCollection.get(tile.uniqueTileName) + "|";
 						}
+					data.put("Layer" + i + ".txt", new Data(layerString));
 				}
 		System.out.println(uniqueIDCollection);
 		return data;

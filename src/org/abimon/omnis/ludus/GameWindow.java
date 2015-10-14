@@ -23,7 +23,7 @@ public class GameWindow extends JFrame {
 	public GameWindow(){
 		super.setTitle("THIS IS SPARTAAA");
 		super.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		super.setVisible(true);
+		//super.setVisible(true);
 		
 		thread = new GameWindowRepaintThread(this);
 		thread.start();

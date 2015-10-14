@@ -15,7 +15,7 @@ import org.abimon.omnis.util.General;
 public class Ludus 
 {
 	private static LinkedList<DataPool> dataPools = new LinkedList<DataPool>();
-	
+
 	public static GameWindow mainWindow = new GameWindow();
 
 	/**
@@ -34,6 +34,14 @@ public class Ludus
 		tileRegistry.put(name, tile);
 	}
 
+	public static Tile getAirTile(){
+		for(Tile tile : tileRegistry.values())
+			if(tile != null)
+				if(tile.unlocalised.toLowerCase().contains("air") || tile.uniqueTileName.toLowerCase().contains("air"))
+					return tile;
+		return null;
+	}
+
 	/**
 	 * Get a registered tile
 	 * @param name The name that the tile we are retrieving is under
@@ -44,7 +52,7 @@ public class Ludus
 			return tileRegistry.get(name).clone();
 		return null;
 	}
-	
+
 	public static Tile getTileForImage(BufferedImage img){
 		for(Tile tile : tileRegistry.values())
 			if(General.equal(tile.getTileIcon(), img))
@@ -66,7 +74,7 @@ public class Ludus
 		for(String tileKey : tileRegistry.keySet())
 			tileRegistry.get(tileKey).reloadIcon();
 	}
-	
+
 	/**
 	 * Adds a folder to the available data pools. 
 	 * Make sure not to add the same folder multiple times, as that may result in weird bugs
