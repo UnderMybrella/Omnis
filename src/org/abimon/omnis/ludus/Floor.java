@@ -2,18 +2,21 @@ package org.abimon.omnis.ludus;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.abimon.omnis.io.Data;
+import org.abimon.omnis.io.ZipData;
 import org.abimon.omnis.util.ExtraArrays;
 
 public class Floor implements Cloneable{
-	HashMap<Integer, Tile[][]> floor = new HashMap<Integer, Tile[][]>();
+	ConcurrentHashMap<Integer, Tile[][]> floor = new ConcurrentHashMap<Integer, Tile[][]>();
 
 	final int FLOOR_SCALE_X = 32;
 	final int FLOOR_SCALE_Y = 32;
 
-	BufferedImage floorImage;
+	volatile BufferedImage floorImage;
 
 	String floorName;
 
@@ -28,10 +31,41 @@ public class Floor implements Cloneable{
 				return null;
 			else
 			{
-				Data data = Ludus.getDataUnsafe(file);
+				Data data = Ludus.getData(file);
+				System.out.println(data);
 				if(data == null)
 					return null;
-				return null;
+				else{
+					ZipData zip = new ZipData(data);
+					Floor floor = new Floor(file.replaceAll("\\..*", ""));
+					Data keys = zip.get("Keys.txt");
+					if(keys == null)
+						return null;
+					for(String key : zip.keySet())
+						if(key.startsWith("Layer"))
+						{
+							String layerNum = key.replace("Layer", "").replace(".txt", "");
+							if(!layerNum.matches("\\d+"))
+								continue;
+							Data layer = zip.get(key);
+							String[] layerStrings = layer.getAsStringArray();
+							System.out.println(layer);
+							Tile[][] tiles = new Tile[layerStrings.length][layerStrings[0].replace("|", "").length()];
+							for(int x = 0; x < tiles.length; x++)
+							{
+								for(int y = 0; y < tiles[x].length; y++)
+								{
+									String name = layerStrings[x].split("\\|")[y];
+									for(String s : keys.getAsStringArray())
+										if(s.split("\\=", 2)[1].trim().equalsIgnoreCase(name))
+											name = s.split("\\=", 2)[0];
+									tiles[x][y] = Ludus.getRegisteredTile(name);
+								}
+							}
+							floor.setLayer(Integer.parseInt(layerNum), tiles);
+						}
+					return floor;
+				}
 			}
 		}
 		catch(Exception e){
@@ -78,8 +112,10 @@ public class Floor implements Cloneable{
 
 	public void rerender(int layerNo){
 		floorImage = new BufferedImage(getTileWidth() * FLOOR_SCALE_X, getTileHeight() * FLOOR_SCALE_Y, BufferedImage.TYPE_INT_ARGB);
-
+		BufferedImage indImg = new BufferedImage(floorImage.getWidth(), floorImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		
 		Graphics2D graphics = (Graphics2D) floorImage.getGraphics();
+		Graphics2D g = (Graphics2D) indImg.getGraphics();
 
 		Tile[][] layer = getLayer(layerNo);
 		for(int i = 0; i < layerNo; i++)
@@ -87,10 +123,14 @@ public class Floor implements Cloneable{
 		for(int x = 0; x < layer.length; x++)
 			for(int y = 0; y < layer[x].length; y++)
 				if(layer[x][y] != null)
+				{
 					graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
-
+					g.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
+				}
 		for(int i = layerNo + 1; i < floor.size(); i++)
 			graphics.drawImage(imageLayers.get(i), 0, 0, null);
+		
+		imageLayers.put(layerNo, indImg);
 	}
 
 	public int getTileWidth() {
@@ -104,8 +144,9 @@ public class Floor implements Cloneable{
 	public int getTileHeight() {
 		int height = 0;
 		for(Tile[][] layer : floor.values())
-			if(layer[0].length > 0)
-				height = layer[0].length;
+			if(layer.length > 0)
+				if(layer[0].length > 0)
+					height = layer[0].length;
 		return height;
 	}
 
@@ -132,7 +173,7 @@ public class Floor implements Cloneable{
 	}
 
 	public long getReloadTime(int layer){
-		long shortestTime = Long.MAX_VALUE;
+		long shortestTime = 1000;
 		for(Tile[] row : this.getLayer(layer))
 			for(Tile tile : row)
 				if(tile != null)
@@ -143,12 +184,12 @@ public class Floor implements Cloneable{
 
 	@Override
 	public String toString(){
-		return "Floor: " + floorName;
+		return "Floor: " + floorName + "\n" + Arrays.deepToString(floor.values().toArray());
 	}
 
 	public Floor clone(){
 		Floor copy = new Floor("Copy of " + floorName);
-		HashMap<Integer, Tile[][]> floorData = new HashMap<Integer, Tile[][]>();
+		ConcurrentHashMap<Integer, Tile[][]> floorData = new ConcurrentHashMap<Integer, Tile[][]>();
 		for(Integer i : floor.keySet())
 			floorData.put(i, ExtraArrays.deepCopyOf(floor.get(i), Tile.class));
 		copy.floor = floorData;

@@ -1,9 +1,12 @@
 package org.abimon.omnis.util;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
 
 public class General {
 
@@ -70,7 +73,33 @@ public class General {
 		for(int x = 0; x < img.getWidth(); x++)
 			for(int y = 0; y < img.getHeight(); y++)
 				if(img.getRGB(x, y) != img2.getRGB(x, y))
+				{
 					return false;
+				}
 		return true;
+	}
+	
+	/**
+	 * Checks if two images are equal
+	 * @param img
+	 * @param img
+	 * @return
+	 */
+	public static Point[] differences(BufferedImage img, BufferedImage img2){
+		if(img == null || img2 == null)
+			return new Point[0];
+		if(img.getHeight() != img2.getHeight())
+			return new Point[0];
+		if(img.getWidth() != img2.getWidth())
+			return new Point[0];
+		LinkedList<Point> diff = new LinkedList<Point>();
+		for(int x = 0; x < img.getWidth(); x++)
+			for(int y = 0; y < img.getHeight(); y++)
+				if(!new Color(img.getRGB(x, y), true).equals(new Color(img2.getRGB(x, y), true))){
+					System.out.println(new Color(img.getRGB(x, y)) + " is *apparently* not equal to " + new Color(img2.getRGB(x, y)));
+					System.out.println(new Color(img.getRGB(x, y)).getAlpha() + " mutter mutter mutter " + new Color(img2.getRGB(x, y)).getAlpha());
+					diff.add(new Point(x, y));
+				}
+		return diff.toArray(new Point[0]);
 	}
 }

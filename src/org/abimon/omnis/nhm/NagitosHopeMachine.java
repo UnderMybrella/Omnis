@@ -1,8 +1,6 @@
 package org.abimon.omnis.nhm;
 
 import java.io.File;
-
-import org.abimon.omnis.io.Data;
 import org.abimon.omnis.io.ZipData;
 import org.abimon.omnis.ludus.AnimatedTile;
 import org.abimon.omnis.ludus.Floor;
@@ -28,19 +26,21 @@ public class NagitosHopeMachine {
 		Ludus.reloadIcons();
 		
 		try {
-			Tiled.tiledToZipData("maps/simple.tmx");
+			ZipData data = Tiled.tiledToZipData("maps/suck.tmx");
+			data.writeToFile("maps/Suck.map");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-//		Floor tmx = Floor.loadFromFile("maps/simple.txt");
-//		System.out.println(tmx);
+		Floor tmx = Floor.loadFromFile("maps/Suck.map");
+		System.out.println(tmx);
 		
 		Floor floor = new Floor("Floor #1");
 		floor.setLayer(LayerList.BACKGROUND_LAYER, new Tile[][]{{sea, sea, sea}, {sea, sea, sea}, {sea, sea, sea}});
 		floor.setLayer(LayerList.FOREGROUND_LAYER, new Tile[][]{{air, air, air}, {air, rock, air}, {air, air, air}});
 		floor.setLayer(LayerList.ANIMATED_FOREGROUND_LAYER, new Tile[][]{{air, flower, air}, {air, air, air}, {air, flower, air}});
 
-		Ludus.mainWindow.setFloor(floor);
+		Ludus.mainWindow.setFloor(tmx);
+		Ludus.mainWindow.setVisible(true);
 	}
 }

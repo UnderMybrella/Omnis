@@ -2,8 +2,13 @@ package org.abimon.omnis.ludus;
 
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.LinkedList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import org.abimon.omnis.ludus.multithreading.FloorReloadThread;
@@ -23,18 +28,13 @@ public class GameWindow extends JFrame {
 	public GameWindow(){
 		super.setTitle("THIS IS SPARTAAA");
 		super.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		//super.setVisible(true);
 		
 		thread = new GameWindowRepaintThread(this);
-		thread.start();
 		
 		floorThread = new FloorReloadThread();
-		floorThread.start();
-		
 		for(int i = 0; i < 3; i++)
 		{
 			LayerReloadThread thread = new LayerReloadThread(i);
-			thread.start();
 			layerThreads.add(thread);
 		}
 	}
@@ -52,17 +52,34 @@ public class GameWindow extends JFrame {
 
 	@Override
 	public void paint(Graphics g){
-		if(floor != null && floor.floorImage != null){
+		if(floor != null && floor.getImage() != null){
 			int width = this.getWidth();
 			int height = this.getHeight();
 
-			int imgWidth = floor.floorImage.getWidth();
-			int imgHeight = floor.floorImage.getHeight();
+			int imgWidth = floor.getImage().getWidth();
+			int imgHeight = floor.getImage().getHeight();
 			
 			int xPos = (width / 2) - (imgWidth / 2);
 			int yPos = (height / 2) - (imgHeight / 2);
 			
-			g.drawImage(floor.floorImage, xPos, yPos, null);
+			BufferedImage img = floor.getImage();
+			
+			g.drawImage(img, xPos, yPos, null);
+			File f = new File(new Date().toString() + ".png");
+			System.out.println(img + "\n" + xPos + ":" + yPos);
+			try {
+				ImageIO.write(img, "PNG", f);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
+	
+    public void setVisible(boolean b) {
+    	thread.start();
+    	floorThread.start();
+    	for(int i = 0; i < layerThreads.size(); i++)
+    		layerThreads.get(i).start();
+        super.setVisible(b);
+    }
 }

@@ -23,13 +23,14 @@ public class Tiled {
 		HashMap<String, String> uniqueIDCollection = new HashMap<String, String>();
 		LinkedList<Integer> uniquePhrase = new LinkedList<Integer>();
 		uniquePhrase.add(-1);
+		System.out.println(map.getLayerCount());
 		for(int i = 0; i < Math.min(map.getLayerCount(), LayerList.LAYER_COUNT); i++)
 			if(map.getLayer(i) != null)
 				if(map.getLayer(i) instanceof TileLayer)
 				{
 					String layerString = "";
 					TileLayer layer = (TileLayer) map.getLayer(i);
-					for(int x = 0; x < layer.getWidth(); x++)
+					for(int x = 0; x < layer.getWidth(); x++){
 						for(int y = 0; y < layer.getHeight(); y++)
 						{	
 							Tile tile = Ludus.getAirTile();
@@ -37,6 +38,8 @@ public class Tiled {
 							{
 								BufferedImage img = General.toBufferedImage(layer.getTileAt(x, y).getImage());
 								tile = Ludus.getTileForImage(img);
+								if(tile == null)
+									tile = Ludus.getAirTile();
 							}
 							if(!uniqueIDCollection.containsKey(tile.uniqueTileName))
 							{
@@ -71,9 +74,18 @@ public class Tiled {
 							}
 							layerString += uniqueIDCollection.get(tile.uniqueTileName) + "|";
 						}
+						layerString += "\n";
+					}
+					layerString = layerString.trim();
 					data.put("Layer" + i + ".txt", new Data(layerString));
 				}
-		System.out.println(uniqueIDCollection);
+		String uniqueString = "";
+		for(String key : uniqueIDCollection.keySet())
+			uniqueString += key + "=" + uniqueIDCollection.get(key) + "\n";
+		uniqueString = uniqueString.trim();
+		data.put("Keys.txt", new Data(uniqueString));
+		System.out.println(uniqueString);
+		System.out.println(data);
 		return data;
 	}
 }

@@ -1,14 +1,20 @@
 package org.abimon.omnis.io;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipData extends Data implements Map<String, Data>, Iterable<String>
@@ -16,6 +22,25 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 	HashMap<String, Data> dataStructure = new HashMap<String, Data>();
 
 	public ZipData(){}
+	
+	public ZipData(Data data) throws IOException{
+		ZipInputStream in = new ZipInputStream(data.getAsInputStream());
+		ZipEntry entry = null;
+		while((entry = in.getNextEntry()) != null){
+			Data dat = new Data(in, false);
+			System.out.println("Dat: " + dat);
+			dataStructure.put(entry.getName(), dat);
+		}
+		in.close();
+	}
+	
+	public ZipData(ZipFile zip){
+		
+	}
+
+	public String toString(){
+		return dataStructure.toString();
+	}
 
 	public void writeToFile(String fileLoc) throws IOException{
 		File loc = new File(fileLoc);
@@ -109,5 +134,59 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 	@Override
 	public Iterator<String> iterator() {
 		return dataStructure.keySet().iterator();
+	}
+
+	/**
+	 * @return null. Use the other method with a string key
+	 */
+	public BufferedImage getAsImage(){
+		return null;
+	}
+
+	public BufferedImage getAsImage(String key){
+		if(dataStructure.containsKey(key))
+			return dataStructure.get(key).getAsImage();
+		return null;
+	}
+
+	/**
+	 * @return toString(). Use the other method with a string key
+	 */
+	public String getAsString(){
+		return toString();
+	}
+
+	public String getAsString(String key){
+		if(dataStructure.containsKey(key))
+			return dataStructure.get(key).getAsString();
+		return null;
+	}
+
+	/**
+	 * @return toString().split("\n"). Use the other method with a string key and a splitter regex
+	 */
+	public String[] getAsStringArray(){
+		return toString().split("\n");
+	}
+
+	/**
+	 * @return toString().split(splitter). Use the other method with a string key and a splitter regex
+	 */
+	public String[] getAsStringArray(String splitter){
+		return toString().split(splitter);
+	}
+
+	public String[] getAsStringArray(String key, String splitter){
+		if(dataStructure.containsKey(key))
+			return dataStructure.get(key).getAsStringArray(splitter);
+		return null;
+	}
+
+	public byte[] toArray(){
+		return Arrays.copyOf(data, data.length);
+	}
+
+	public InputStream getAsInputStream(){
+		return new ByteArrayInputStream(data);
 	}
 }

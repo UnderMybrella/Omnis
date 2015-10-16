@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
  */
 public class Data {
 
-	private final byte[] data;
+	protected final byte[] data;
 
 	/** 
 	 * Creates an empty data object. Only 1 kB of data is storable in this instance 
@@ -43,7 +43,21 @@ public class Data {
 		in.read(data);
 		in.close();
 	}
-	
+
+	public Data(InputStream in, boolean close) throws IOException{
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		while(true){
+			byte[] tmpData = new byte[1024];
+			int read = in.read(tmpData);
+			if(read <= 0)
+				break;
+			baos.write(tmpData);
+		}
+		data = baos.toByteArray();
+		if(close)
+			in.close();
+	}
+
 	public Data(String str){
 		data = str.getBytes();
 	}
@@ -84,19 +98,19 @@ public class Data {
 		}
 		return null;
 	}
-	
+
 	public String getAsString(){
 		return new String(data);
 	}
-	
+
 	public String[] getAsStringArray(){
 		return getAsStringArray("\n");
 	}
-	
+
 	public String[] getAsStringArray(String splitter){
 		return new String(data).split(splitter);
 	}
-	
+
 	public InputStream getAsInputStream(){
 		return new ByteArrayInputStream(data);
 	}
