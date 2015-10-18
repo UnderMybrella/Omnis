@@ -11,11 +11,11 @@ import org.abimon.omnis.ludus.Tiled;
 
 public class NagitosHopeMachine {
 	
-	public static Tile air = new Tile("NHM:air", "air", "");
-	public static Tile grass = new Tile("NHM:grass", "grass", "resources/Grass.png");
-	public static Tile rock = new Tile("NHM:rock", "rock", "resources/Rock.png");
-	public static Tile flower = new AnimatedTile("NHM:flower", "flower", "resources/flower.ani");
-	public static Tile sea = new AnimatedTile("NHM:seaAnimated", "sea", "resources/sea.ani");
+	public static Tile air = new Tile("NHM:air", "air", "", false);
+	public static Tile grass = new Tile("NHM:grass", "grass", "resources/Grass.png", false);
+	public static Tile rock = new Tile("NHM:rock", "rock", "resources/Rock.png", true);
+	public static Tile flower = new AnimatedTile("NHM:flower", "flower", "resources/flower.ani", false);
+	public static Tile sea = new AnimatedTile("NHM:seaAnimated", "sea", "resources/sea.ani", true);
 	//public static Tile sea = new Tile("NHM:sea", "sea", "resources/sea.png");
 	
 	public static void main(String[] args){

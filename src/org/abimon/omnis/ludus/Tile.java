@@ -10,13 +10,21 @@ public class Tile implements Cloneable{
 	
 	BufferedImage icon;
 	
-	public Tile(String uniqueTileName, String unlocalised, String resourceLocation){
+	boolean collide = false;
+	
+	public Tile(String uniqueTileName, String unlocalised, String resourceLocation, boolean collide){
 		this.unlocalised = unlocalised;
 		this.resourceLocation = resourceLocation;
 		
 		this.uniqueTileName = uniqueTileName;
 		
 		Ludus.registerTile(uniqueTileName, this);
+		
+		this.collide = collide;
+	}
+	
+	public boolean canCollide(Entity entity){
+		return collide;
 	}
 	
 	public void reloadIcon(){

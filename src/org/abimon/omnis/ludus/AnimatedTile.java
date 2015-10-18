@@ -21,8 +21,8 @@ public class AnimatedTile extends Tile {
 	int step = -1;
 	LinkedList<AnimationPairing> delays = new LinkedList<AnimationPairing>();
 
-	public AnimatedTile(String uniqueTileName, String unlocalised, String animationLocation) {
-		super(uniqueTileName, unlocalised, "");
+	public AnimatedTile(String uniqueTileName, String unlocalised, String animationLocation, boolean collide) {
+		super(uniqueTileName, unlocalised, "", collide);
 		this.animationLocation = animationLocation;
 	}
 

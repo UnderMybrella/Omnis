@@ -12,11 +12,10 @@ import org.abimon.omnis.util.ExtraArrays;
 
 public class Floor implements Cloneable{
 	ConcurrentHashMap<Integer, Tile[][]> floor = new ConcurrentHashMap<Integer, Tile[][]>();
-
+	
+	
 	final int FLOOR_SCALE_X = 32;
 	final int FLOOR_SCALE_Y = 32;
-
-	volatile BufferedImage floorImage;
 
 	String floorName;
 
@@ -84,53 +83,44 @@ public class Floor implements Cloneable{
 		floor.put(layer, tileLayer);
 	}
 
-	public BufferedImage getImage(){
-		return floorImage;
+	public BufferedImage getImage(int layer){
+		return imageLayers.get(layer);
 	}
 
-	public void rerender(){
-		floorImage = new BufferedImage(getTileWidth() * FLOOR_SCALE_X, getTileHeight() * FLOOR_SCALE_Y, BufferedImage.TYPE_INT_ARGB);
+	//	public void rerender(){
+	//		floorImage = new BufferedImage(getTileWidth() * FLOOR_SCALE_X, getTileHeight() * FLOOR_SCALE_Y, BufferedImage.TYPE_INT_ARGB);
+	//
+	//		Graphics2D graphics = (Graphics2D) floorImage.getGraphics();
+	//
+	//		for(int layerNo = 0; layerNo < floor.size(); layerNo++){
+	//			Tile[][] layer = floor.get(layerNo);
+	//			BufferedImage img = new BufferedImage(floorImage.getWidth(), floorImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	//			Graphics2D g = (Graphics2D) img.getGraphics();
+	//			for(int x = 0; x < layer.length; x++)
+	//				for(int y = 0; y < layer[x].length; y++)
+	//					if(layer[x][y] != null)
+	//					{
+	//						graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
+	//						g.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
+	//					}
+	//			imageLayers.put(layerNo, img);
+	//		}
+	//	}
 
-		Graphics2D graphics = (Graphics2D) floorImage.getGraphics();
-
-		for(int layerNo = 0; layerNo < floor.size(); layerNo++){
-			Tile[][] layer = floor.get(layerNo);
-			BufferedImage img = new BufferedImage(floorImage.getWidth(), floorImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) img.getGraphics();
-			for(int x = 0; x < layer.length; x++)
-				for(int y = 0; y < layer[x].length; y++)
-					if(layer[x][y] != null)
-					{
-						graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
-						g.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
-					}
-			imageLayers.put(layerNo, img);
-		}
-	}
-
-	HashMap<Integer, BufferedImage> imageLayers = new HashMap<Integer, BufferedImage>();
+	ConcurrentHashMap<Integer, BufferedImage> imageLayers = new ConcurrentHashMap<Integer, BufferedImage>();
 
 	public void rerender(int layerNo){
-		floorImage = new BufferedImage(getTileWidth() * FLOOR_SCALE_X, getTileHeight() * FLOOR_SCALE_Y, BufferedImage.TYPE_INT_ARGB);
-		BufferedImage indImg = new BufferedImage(floorImage.getWidth(), floorImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		
+		BufferedImage floorImage = new BufferedImage(getTileWidth() * FLOOR_SCALE_X, getTileHeight() * FLOOR_SCALE_Y, BufferedImage.TYPE_INT_ARGB);
+
 		Graphics2D graphics = (Graphics2D) floorImage.getGraphics();
-		Graphics2D g = (Graphics2D) indImg.getGraphics();
 
 		Tile[][] layer = getLayer(layerNo);
-		for(int i = 0; i < layerNo; i++)
-			graphics.drawImage(imageLayers.get(i), 0, 0, null);
 		for(int x = 0; x < layer.length; x++)
 			for(int y = 0; y < layer[x].length; y++)
 				if(layer[x][y] != null)
-				{
 					graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
-					g.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
-				}
-		for(int i = layerNo + 1; i < floor.size(); i++)
-			graphics.drawImage(imageLayers.get(i), 0, 0, null);
 		
-		imageLayers.put(layerNo, indImg);
+		imageLayers.put(layerNo, floorImage);
 	}
 
 	public int getTileWidth() {
@@ -158,7 +148,7 @@ public class Floor implements Cloneable{
 					if(tile != null)
 						if(tile.getReloadTime() < shortestTime)
 							shortestTime = tile.getReloadTime();
-		return Math.max(shortestTime, 10000);
+		return Math.max(shortestTime, 1000);
 	}
 
 	public long getReloadTimeUnconditional(){
@@ -173,7 +163,7 @@ public class Floor implements Cloneable{
 	}
 
 	public long getReloadTime(int layer){
-		long shortestTime = 1000;
+		long shortestTime = 2000;
 		for(Tile[] row : this.getLayer(layer))
 			for(Tile tile : row)
 				if(tile != null)
