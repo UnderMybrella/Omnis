@@ -3,6 +3,7 @@ package org.abimon.omnis.nhm;
 import java.io.File;
 import org.abimon.omnis.io.ZipData;
 import org.abimon.omnis.ludus.AnimatedTile;
+import org.abimon.omnis.ludus.EntityPlayer;
 import org.abimon.omnis.ludus.Floor;
 import org.abimon.omnis.ludus.LayerList;
 import org.abimon.omnis.ludus.Ludus;
@@ -16,12 +17,15 @@ public class NagitosHopeMachine {
 	public static Tile rock = new Tile("NHM:rock", "rock", "resources/Rock.png", true);
 	public static Tile flower = new AnimatedTile("NHM:flower", "flower", "resources/flower.ani", false);
 	public static Tile sea = new AnimatedTile("NHM:seaAnimated", "sea", "resources/sea.ani", true);
+	
 	//public static Tile sea = new Tile("NHM:sea", "sea", "resources/sea.png");
 	
 	public static void main(String[] args){
 		Ludus.registerDataPool(NagitosHopeMachine.class.getClassLoader());
 		Ludus.registerDataPool(new File("resources"));
 		Ludus.registerDataPool(new File("maps"));
+		
+		Ludus.registerPlayer(new EntityPlayer("resources/Player.png"));
 		
 		Ludus.reloadIcons();
 		

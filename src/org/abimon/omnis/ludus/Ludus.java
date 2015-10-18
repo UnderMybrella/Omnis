@@ -15,6 +15,8 @@ import org.abimon.omnis.util.General;
 public class Ludus 
 {
 	private static LinkedList<DataPool> dataPools = new LinkedList<DataPool>();
+	
+	public static EntityPlayer thePlayer;
 
 	public static GameWindow mainWindow = new GameWindow();
 
@@ -25,6 +27,10 @@ public class Ludus
 	 */
 	private static HashMap<String, Tile> tileRegistry = new HashMap<String, Tile>();
 
+	public static void registerPlayer(EntityPlayer player){
+		thePlayer = player;
+	}
+	
 	/**
 	 * Register a tile. Allows for overriding of existing tiles.
 	 * @param name The name to register the tile under
@@ -73,6 +79,8 @@ public class Ludus
 	public static void reloadIcons(){
 		for(String tileKey : tileRegistry.keySet())
 			tileRegistry.get(tileKey).reloadIcon();
+		
+		
 	}
 
 	/**

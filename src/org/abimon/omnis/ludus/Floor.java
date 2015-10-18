@@ -3,7 +3,6 @@ package org.abimon.omnis.ludus;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.abimon.omnis.io.Data;
