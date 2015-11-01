@@ -120,6 +120,7 @@ public class Floor implements Cloneable{
 					graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
 		
 		imageLayers.put(layerNo, floorImage);
+		graphics.dispose();
 	}
 
 	public int getTileWidth() {
@@ -151,7 +152,7 @@ public class Floor implements Cloneable{
 	}
 
 	public long getReloadTimeUnconditional(){
-		long shortestTime = Long.MAX_VALUE;
+		long shortestTime = 125;
 		for(Tile[][] layer : floor.values())
 			for(Tile[] row : layer)
 				for(Tile tile : row)
@@ -162,6 +163,8 @@ public class Floor implements Cloneable{
 	}
 
 	public long getReloadTime(int layer){
+		if(layer == LayerList.ENTITY_LAYER)
+			return 125;
 		long shortestTime = 2000;
 		for(Tile[] row : this.getLayer(layer))
 			for(Tile tile : row)

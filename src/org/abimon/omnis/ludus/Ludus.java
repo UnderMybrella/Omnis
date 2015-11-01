@@ -1,5 +1,6 @@
 package org.abimon.omnis.ludus;
 
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +17,11 @@ public class Ludus
 {
 	private static LinkedList<DataPool> dataPools = new LinkedList<DataPool>();
 	
-	public static EntityPlayer thePlayer;
+	public static volatile EntityPlayer thePlayer;
 
 	public static GameWindow mainWindow = new GameWindow();
+	
+	public static final DefaultKeyListener defaultKeyListener = new DefaultKeyListener();
 
 	/**
 	 * Tile Registry
@@ -117,5 +120,9 @@ public class Ludus
 			th.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static void registerKeyListener(KeyListener listener){
+		mainWindow.addKeyListener(listener);
 	}
 }

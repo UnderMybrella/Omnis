@@ -4,8 +4,8 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 public class Entity {
 
-	int x = 0;
-	int y = 0;
+	public volatile int x = 0;
+	public volatile int y = 0;
 
 	String imageLocation;
 	BufferedImage img;
@@ -20,14 +20,18 @@ public class Entity {
 		img = Ludus.getDataUnsafe(imageLocation).getAsImage();
 	}
 
-	public int getX(){
+	public float getX(){
 		return x;
 	}
 
-	public int getY(){
+	public float getY(){
 		return y;
 	}
 
+	/** 
+	 * Note: Not precise: Do not use unless absolutely necessary
+	 * @return An imprecise location of the player; that is, the integer versions. Should only be used for absolute positioning, not rendering
+	 */
 	public Point getCoords(){
 		return new Point(x, y);
 	}
