@@ -109,4 +109,12 @@ public class General {
 		
 		return new Point(xPos, yPos);
 	}
+	
+	public static BufferedImage[] getImagesInGrid(BufferedImage img, int width, int height){
+		BufferedImage[] imgs = new BufferedImage[width * height];
+		for(int x = 0; x < width; x++)
+			for(int y = 0; y < height; y++)
+				imgs[x * width + y] = img.getSubimage(x * (img.getWidth() / width), y * (img.getHeight() / height), img.getWidth() / width, img.getHeight() / height);
+		return imgs;
+	}
 }

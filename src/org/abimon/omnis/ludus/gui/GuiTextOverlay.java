@@ -7,14 +7,19 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 
 import org.abimon.omnis.ludus.Ludus;
 import org.abimon.omnis.util.General;
 
 public class GuiTextOverlay implements Gui{
 
-	public String text;
+	String line = "";
+	int step = -1;
+	long waitingOn = 0L;
+	public LinkedList<String> text = null;
 	public BufferedImage[] imgs;
+	public BufferedImage[] arrow;
 	public Font font;
 
 	public GuiTextOverlay(String text){
@@ -30,13 +35,10 @@ public class GuiTextOverlay implements Gui{
 	}
 
 	public GuiTextOverlay(String text, String textBoxLocation, Font font){
-		this.text = text;
+		line = text;
 		this.font = font;
-		BufferedImage img = Ludus.getDataUnsafe(textBoxLocation).getAsImage();
-		imgs = new BufferedImage[9];
-		for(int x = 0; x < 3; x++)
-			for(int y = 0; y < 3; y++)
-				imgs[x * 3 + y] = img.getSubimage(x * (img.getWidth() / 3), y * (img.getHeight() / 3), img.getWidth() / 3, img.getHeight() / 3);
+		imgs = General.getImagesInGrid(Ludus.getDataUnsafe(textBoxLocation).getAsImage(), 3, 3);
+		arrow = General.getImagesInGrid(Ludus.getDataUnsafe("resources/Arrow.png").getAsImage(), 2, 2);
 	}
 
 	@Override
@@ -47,13 +49,19 @@ public class GuiTextOverlay implements Gui{
 
 		Font font = g.getFont();
 		int width = Ludus.mainWindow.getFloor().getWidth();
-		double fontLineHeight = metrics.getHeight() * 1.75;
-		int lines = 0;
-		for(String s : text.split("\n"))
+
+		if(text == null)
 		{
-			int totalLineLength = (int) metrics.getStringBounds(s, g).getWidth();
-			lines += (totalLineLength / (width - imgs[1].getWidth() - imgs[7].getWidth()) + 1);
+			text = new LinkedList<String>();
+			for(String str : line.split("\n")){
+				String[] strings = getSubstrings(str, g, metrics, (width - imgs[1].getWidth() - imgs[7].getWidth()));
+				for(String s : strings)
+					text.add(s.trim());
+			}
 		}
+
+		double fontLineHeight = metrics.getHeight() * 1.75;
+		int lines = Math.min(3, text.size());
 		int height = (int) ((fontLineHeight * lines) + imgs[0].getHeight() + imgs[2].getHeight());
 		Point coords = General.getStartingPoint(Ludus.mainWindow.getWidth(), Ludus.mainWindow.getHeight(), width, Ludus.mainWindow.getFloor().getHeight());
 
@@ -91,15 +99,26 @@ public class GuiTextOverlay implements Gui{
 		txt.drawImage(imgs[8], width - imgs[8].getWidth(), height - imgs[2].getHeight(), null);
 
 		g.drawImage(textBox, coords.x, coords.y + Ludus.mainWindow.getFloor().getHeight() - textBox.getHeight(), null);
-		int lineCount = 0;
-		for(String line : text.split("\n")){
-			int lineWidthThing = (width - imgs[1].getWidth() - imgs[7].getWidth());
-			String[] sublines = getSubstrings(line, g, metrics, lineWidthThing);
-			for(String subLine : sublines){
-				g.drawString(subLine.trim(), coords.x + ((int) (imgs[0].getWidth() * 1.5)), (int) (lineCount * (font.getSize() * 1.25)) + coords.y + Ludus.mainWindow.getFloor().getHeight() - textBox.getHeight() + ((int) (imgs[0].getHeight() * 2.5)));
-				lineCount++;
+		for(int i = 0; i < lines; i++){
+			g.drawString(text.get(i), coords.x + ((int) (imgs[0].getWidth() * 1.5)), (int) (i * (font.getSize() * 1.25)) + coords.y + Ludus.mainWindow.getFloor().getHeight() - textBox.getHeight() + ((int) (imgs[0].getHeight() * 2.5)));
+		}
+
+		if(step < 0)
+		{
+			System.out.println(System.currentTimeMillis());
+			waitingOn = System.currentTimeMillis() + 250;
+			step = 0;
+		}
+		else{
+			if(System.currentTimeMillis() >= waitingOn)
+			{
+				step++;
+				if(step >= 4)
+					step = 0;
+				waitingOn = System.currentTimeMillis() + 250;
 			}
 		}
+		g.drawImage(arrow[step], coords.x + width - (int) (imgs[8].getWidth() * 2.5), coords.y + Ludus.mainWindow.getFloor().getHeight() - (int) (imgs[8].getHeight() * 2.5), null);
 	}
 
 	public static String[] getSubstrings(String line, Graphics g, FontMetrics metrics, int width) {
@@ -127,13 +146,16 @@ public class GuiTextOverlay implements Gui{
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {
-
-	}
+	public void keyTyped(KeyEvent e) {}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-
+		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE)
+			if(text != null)
+				if(text.size() <= 3)
+					Ludus.dismissGui();
+				else
+					text.poll();
 	}
 
 	@Override
