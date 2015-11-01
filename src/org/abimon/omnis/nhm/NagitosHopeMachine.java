@@ -2,6 +2,7 @@ package org.abimon.omnis.nhm;
 
 import java.io.File;
 import org.abimon.omnis.io.ZipData;
+import org.abimon.omnis.lang.Language;
 import org.abimon.omnis.ludus.AnimatedTile;
 import org.abimon.omnis.ludus.EntityPlayer;
 import org.abimon.omnis.ludus.Floor;
@@ -45,6 +46,14 @@ public class NagitosHopeMachine {
 		floor.setLayer(LayerList.ANIMATED_FOREGROUND_LAYER, new Tile[][]{{air, flower, air}, {air, air, air}, {air, flower, air}});
 
 		Ludus.mainWindow.setFloor(tmx);
-		Ludus.mainWindow.setVisible(true);
+		//Ludus.mainWindow.setVisible(true);
+		
+		Language swahili = new Language();
+		//swahili.learn("English", " ", "", new String[]{"nitanipenda", "nitanipenda", "nitanipenda"},  new String[]{"I will like me", "I will like me", "I will like me"});
+		swahili.learn("English", " ", "", new String[]{"nitanipenda", "utanipenda", "atanipenda"},  new String[]{"I will like me", "you will like me", "s/he will like me"});
+		swahili.learn("English", " ", "", new String[]{"nita", "nili", "nina"},  new String[]{"I will", "I did", "I do"});
+		swahili.learn("English", " ", "", new String[]{"nitanipenda", "nitakupenda", "nitampenda"},  new String[]{"I will like me", "I will like you", "I will like him/her"});
+		swahili.learn("English", " ", "", new String[]{"nitanipenda", "nitanisumbua", "nitanipiga"},  new String[]{"I will like me", "I will annoy me", "I will beat me"});
+		System.out.println(swahili.translate("English", "I will like me", " ", ""));
 	}
 }
