@@ -139,6 +139,14 @@ public class Floor implements Cloneable{
 					height = layer[0].length;
 		return height;
 	}
+	
+	public int getWidth() {
+		return getTileWidth() * FLOOR_SCALE_X;
+	}
+
+	public int getHeight() {
+		return getTileHeight() * FLOOR_SCALE_Y;
+	}
 
 	public long getReloadTime(){
 		long shortestTime = Long.MAX_VALUE;

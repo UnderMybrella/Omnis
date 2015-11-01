@@ -34,15 +34,15 @@ public class GameWindow extends JFrame{
 			LayerReloadThread thread = new LayerReloadThread(i);
 			layerThreads.add(thread);
 		}
-		
+
 		this.setBackground(Color.white);
-		
+
 		buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 	}
 
 	public void setFloor(Floor floor){
 		this.floor = floor;
-//		floorThread.setFloor(floor);
+		//		floorThread.setFloor(floor);
 		for(LayerReloadThread thread : layerThreads)
 			thread.setFloor(floor);
 	}
@@ -50,7 +50,7 @@ public class GameWindow extends JFrame{
 	public Floor getFloor(){
 		return floor;
 	}
-	
+
 	public BufferedImage buffer;
 
 	@Override
@@ -59,19 +59,20 @@ public class GameWindow extends JFrame{
 		int height = this.getHeight();
 
 		int imgWidth = floor.getTileWidth() * floor.FLOOR_SCALE_X;
-		int imgHeight = (floor.getTileHeight() + (Ludus.thePlayer.getIcon().getHeight() / floor.FLOOR_SCALE_Y)) * floor.FLOOR_SCALE_Y;
+		int imgHeight = floor.getTileHeight() * floor.FLOOR_SCALE_Y;
 
 		int xPos = (width / 2) - (imgWidth / 2);
 		int yPos = (height / 2) - (imgHeight / 2);
-		
+
 		Graphics g = buffer.getGraphics();
-		
+
 		g.setColor(Color.white);
 		g.fillRect(0, 0, width, height);
-		
+
 		for(int layer = 0; layer < LayerList.LAYER_COUNT; layer++)
 			if(layer == LayerList.ENTITY_LAYER){
-				g.drawImage(Ludus.thePlayer.getIcon(), (int) (Ludus.thePlayer.getX() * floor.FLOOR_SCALE_X + xPos), (int) (Ludus.thePlayer.getY() * floor.FLOOR_SCALE_Y + yPos), null);
+				if(Ludus.thePlayer != null)
+					g.drawImage(Ludus.thePlayer.getIcon(), (int) (Ludus.thePlayer.getX() * floor.FLOOR_SCALE_X + xPos), (int) (Ludus.thePlayer.getY() * floor.FLOOR_SCALE_Y + yPos), (int) (floor.FLOOR_SCALE_X * Ludus.thePlayer.getScaleX()), (int) (floor.FLOOR_SCALE_Y * Ludus.thePlayer.getScaleY()), null);
 			}
 			else
 				if(floor != null && floor.getImage(layer) != null){
@@ -79,9 +80,11 @@ public class GameWindow extends JFrame{
 				}
 				else
 					System.out.println("Layer " + layer + " is null");
-		
-		g2.drawImage(buffer, 0, 0, null);
+
+		if(Ludus.guiInUse != null)
+			Ludus.guiInUse.render(g);
 		g.dispose();
+		g2.drawImage(buffer, 0, 0, null);
 	}
 
 	public void setVisible(boolean b) {

@@ -13,9 +13,10 @@ public class DefaultKeyListener implements KeyListener, Runnable {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		System.out.println("Typed");
+		if(Ludus.guiInUse != null)
+			return;
 		char key = (e.getKeyChar() + "").toLowerCase().charAt(0);
-		if(key == 'w' || key == 'a' || key == 's' || key == 'd')
+		if((key == 'w' || key == 'a' || key == 's' || key == 'd') && !Ludus.thePlayer.moving && Ludus.thePlayer.step < 0)
 		{
 			Ludus.thePlayer.dir = key == 'w' ? EnumDirection.NORTH : key == 'a' ? EnumDirection.WEST : key == 's' ? EnumDirection.SOUTH : EnumDirection.EAST;
 			//			if(Ludus.thePlayer.dir == EnumDirection.NORTH)
@@ -32,6 +33,8 @@ public class DefaultKeyListener implements KeyListener, Runnable {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if(Ludus.guiInUse != null)
+			return;
 		//		System.out.println("Pressed");
 		//		char key = (e.getKeyChar() + "").toLowerCase().charAt(0);
 		//		if(key == 'w' || key == 'a' || key == 's' || key == 'd')
@@ -43,6 +46,8 @@ public class DefaultKeyListener implements KeyListener, Runnable {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if(Ludus.guiInUse != null)
+			return;
 		char key = (e.getKeyChar() + "").toLowerCase().charAt(0);
 		if(key == 'w' || key == 'a' || key == 's' || key == 'd')
 		{

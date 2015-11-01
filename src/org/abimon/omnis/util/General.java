@@ -102,4 +102,11 @@ public class General {
 				}
 		return diff.toArray(new Point[0]);
 	}
+	
+	public static Point getStartingPoint(int width, int height, int imgWidth, int imgHeight){
+		int xPos = (width / 2) - (imgWidth / 2);
+		int yPos = (height / 2) - (imgHeight / 2);
+		
+		return new Point(xPos, yPos);
+	}
 }

@@ -8,7 +8,7 @@ public class Entity {
 	public volatile int y = 0;
 
 	String imageLocation;
-	BufferedImage img;
+	public BufferedImage img;
 
 	public Entity(String imageLocation){
 		this.imageLocation = imageLocation;
@@ -34,6 +34,14 @@ public class Entity {
 	 */
 	public Point getCoords(){
 		return new Point(x, y);
+	}
+	
+	public float getScaleX(){
+		return 1;
+	}
+	
+	public float getScaleY(){
+		return 1;
 	}
 
 	public BufferedImage getIcon(){

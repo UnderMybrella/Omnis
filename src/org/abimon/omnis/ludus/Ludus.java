@@ -11,16 +11,18 @@ import org.abimon.omnis.io.ClassLoaderDataPool;
 import org.abimon.omnis.io.Data;
 import org.abimon.omnis.io.DataPool;
 import org.abimon.omnis.io.FolderDataPool;
+import org.abimon.omnis.ludus.gui.Gui;
 import org.abimon.omnis.util.General;
 
 public class Ludus 
 {
 	private static LinkedList<DataPool> dataPools = new LinkedList<DataPool>();
-	
+
 	public static volatile EntityPlayer thePlayer;
+	public static volatile Gui guiInUse;
 
 	public static GameWindow mainWindow = new GameWindow();
-	
+
 	public static final DefaultKeyListener defaultKeyListener = new DefaultKeyListener();
 
 	/**
@@ -33,7 +35,24 @@ public class Ludus
 	public static void registerPlayer(EntityPlayer player){
 		thePlayer = player;
 	}
-	
+
+	public static void dismissGui(){
+		guiInUse.dismiss();
+		guiInUse = null;
+		mainWindow.removeKeyListener(guiInUse);
+	}
+
+	public static void showGui(Gui gui){
+		if(guiInUse != null)
+			dismissGui();
+		if(thePlayer != null){
+			thePlayer.step = -1;
+			thePlayer.moving = false;
+		}
+		guiInUse = gui;
+		mainWindow.addKeyListener(guiInUse);
+	}
+
 	/**
 	 * Register a tile. Allows for overriding of existing tiles.
 	 * @param name The name to register the tile under
@@ -82,8 +101,8 @@ public class Ludus
 	public static void reloadIcons(){
 		for(String tileKey : tileRegistry.keySet())
 			tileRegistry.get(tileKey).reloadIcon();
-		
-		
+
+
 	}
 
 	/**
@@ -121,7 +140,7 @@ public class Ludus
 		}
 		return null;
 	}
-	
+
 	public static void registerKeyListener(KeyListener listener){
 		mainWindow.addKeyListener(listener);
 	}
