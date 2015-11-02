@@ -42,7 +42,6 @@ public class GameWindow extends JFrame{
 
 	public void setFloor(Floor floor){
 		this.floor = floor;
-		//		floorThread.setFloor(floor);
 		for(LayerReloadThread thread : layerThreads)
 			thread.setFloor(floor);
 	}

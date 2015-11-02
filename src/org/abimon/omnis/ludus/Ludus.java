@@ -12,6 +12,7 @@ import org.abimon.omnis.io.Data;
 import org.abimon.omnis.io.DataPool;
 import org.abimon.omnis.io.FolderDataPool;
 import org.abimon.omnis.ludus.gui.Gui;
+import org.abimon.omnis.ludus.gui.GuiListener;
 import org.abimon.omnis.ludus.gui.HUD;
 import org.abimon.omnis.util.General;
 
@@ -26,6 +27,7 @@ public class Ludus
 	public static GameWindow mainWindow = new GameWindow();
 
 	public static final DefaultKeyListener defaultKeyListener = new DefaultKeyListener();
+	public static LinkedList<GuiListener> guiListeners = new LinkedList<GuiListener>();
 
 	/**
 	 * Tile Registry
@@ -34,25 +36,40 @@ public class Ludus
 	 */
 	private static HashMap<String, Tile> tileRegistry = new HashMap<String, Tile>();
 
-	public static void registerPlayer(EntityPlayer player){
+	public static void registerPlayer(EntityPlayer player) {
 		thePlayer = player;
 	}
 
-	public static void dismissGui(){
+	public static void dismissGui() {
 		guiInUse.dismiss();
+		
+		for(GuiListener listener : guiListeners)
+			listener.onGuiClosed(guiInUse);
+		
 		guiInUse = null;
 		mainWindow.removeKeyListener(guiInUse);
 	}
 
-	public static void showGui(Gui gui){
-		if(guiInUse != null)
+	public static void showGui(Gui gui) {
+		if(guiInUse != null){
 			dismissGui();
+			
+			for(GuiListener listener : guiListeners)
+				listener.onGuiReplaced(guiInUse, gui);
+		}
 		if(thePlayer != null){
 			thePlayer.step = -1;
 			thePlayer.moving = false;
 		}
 		guiInUse = gui;
 		mainWindow.addKeyListener(guiInUse);
+		
+		for(GuiListener listener : guiListeners)
+			listener.onGuiOpened(guiInUse);
+	}
+	
+	public static void addGuiListener(GuiListener listener) {
+		guiListeners.add(listener);
 	}
 
 	/**
