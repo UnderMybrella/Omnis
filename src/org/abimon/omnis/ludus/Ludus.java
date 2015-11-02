@@ -97,6 +97,10 @@ public class Ludus
 		DataPool pool = new ClassLoaderDataPool(loader);
 		dataPools.add(pool);
 	}
+	
+	public static void registerDataPool(DataPool pool){
+		dataPools.add(pool);
+	}
 
 	public static void reloadIcons(){
 		for(String tileKey : tileRegistry.keySet())
