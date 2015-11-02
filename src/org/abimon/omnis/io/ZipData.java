@@ -28,7 +28,6 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 		ZipEntry entry = null;
 		while((entry = in.getNextEntry()) != null){
 			Data dat = new Data(in, false);
-			System.out.println("Dat: " + dat);
 			dataStructure.put(entry.getName(), dat);
 		}
 		in.close();

@@ -66,7 +66,7 @@ public class GameWindow extends JFrame{
 
 		Graphics g = buffer.getGraphics();
 
-		g.setColor(Color.white);
+		g.setColor(this.getBackground());
 		g.fillRect(0, 0, width, height);
 
 		for(int layer = 0; layer < LayerList.LAYER_COUNT; layer++)

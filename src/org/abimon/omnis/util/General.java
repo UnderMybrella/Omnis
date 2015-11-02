@@ -36,6 +36,19 @@ public class General {
 		}
 		return null;
 	}
+	
+	/**
+	 * Joins an array with a newline between each element
+	 * @param lines
+	 * @return
+	 */
+	public static String join(String[] lines){
+		String s = "";
+		for(String str : lines)
+			s += str + "\n";
+		return s.trim();
+	}
+	
 	/**
 	 * Converts a given Image into a BufferedImage
 	 *

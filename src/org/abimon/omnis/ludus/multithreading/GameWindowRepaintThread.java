@@ -17,8 +17,6 @@ public class GameWindowRepaintThread extends Thread {
 				window.repaint();
 				if(window.getFloor() != null)
 					Thread.sleep(Math.min(1000, window.getFloor().getReloadTimeUnconditional()));
-				else
-					System.out.println("Null?!");
 			}
 			catch(Throwable th){}
 		}

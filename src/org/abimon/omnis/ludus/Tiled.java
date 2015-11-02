@@ -23,7 +23,6 @@ public class Tiled {
 		HashMap<String, String> uniqueIDCollection = new HashMap<String, String>();
 		LinkedList<Integer> uniquePhrase = new LinkedList<Integer>();
 		uniquePhrase.add(-1);
-		System.out.println(map.getLayerCount());
 		for(int i = 0; i < Math.min(map.getLayerCount(), LayerList.LAYER_COUNT); i++)
 			if(map.getLayer(i) != null)
 				if(map.getLayer(i) instanceof TileLayer)
@@ -43,7 +42,6 @@ public class Tiled {
 							}
 							if(!uniqueIDCollection.containsKey(tile.uniqueTileName))
 							{
-								System.out.println("Found " + tile);
 								uniquePhrase.set(0, uniquePhrase.get(0) + 1);
 								if(uniquePhrase.get(0) >= LIBRARY.length)
 								{
@@ -84,8 +82,6 @@ public class Tiled {
 			uniqueString += key + "=" + uniqueIDCollection.get(key) + "\n";
 		uniqueString = uniqueString.trim();
 		data.put("Keys.txt", new Data(uniqueString));
-		System.out.println(uniqueString);
-		System.out.println(data);
 		return data;
 	}
 }

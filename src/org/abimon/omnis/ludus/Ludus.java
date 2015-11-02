@@ -12,6 +12,7 @@ import org.abimon.omnis.io.Data;
 import org.abimon.omnis.io.DataPool;
 import org.abimon.omnis.io.FolderDataPool;
 import org.abimon.omnis.ludus.gui.Gui;
+import org.abimon.omnis.ludus.gui.HUD;
 import org.abimon.omnis.util.General;
 
 public class Ludus 
@@ -20,6 +21,7 @@ public class Ludus
 
 	public static volatile EntityPlayer thePlayer;
 	public static volatile Gui guiInUse;
+	public static volatile LinkedList<HUD> huds = new LinkedList<HUD>();
 
 	public static GameWindow mainWindow = new GameWindow();
 

@@ -75,7 +75,7 @@ public class Floor implements Cloneable{
 				if(data == null)
 					return null;
 				else{
-					ZipData zip = new ZipData(data);
+					ZipData zip = data instanceof ZipData ? (ZipData) data : new ZipData(data);
 					Floor floor = new Floor(file.replaceAll("\\..*", ""));
 					Data keys = zip.get("Keys.txt");
 					if(keys == null)
@@ -88,7 +88,6 @@ public class Floor implements Cloneable{
 								continue;
 							Data layer = zip.get(key);
 							String[] layerStrings = layer.getAsStringArray();
-							System.out.println(layer);
 							Tile[][] tiles = new Tile[layerStrings.length][layerStrings[0].replace("|", "").length()];
 							for(int x = 0; x < tiles.length; x++)
 							{
