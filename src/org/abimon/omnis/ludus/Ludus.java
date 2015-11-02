@@ -43,11 +43,12 @@ public class Ludus
 	public static void dismissGui() {
 		guiInUse.dismiss();
 		
-		for(GuiListener listener : guiListeners)
-			listener.onGuiClosed(guiInUse);
-		
+		Gui dismissing = guiInUse;
 		guiInUse = null;
 		mainWindow.removeKeyListener(guiInUse);
+		
+		for(GuiListener listener : guiListeners)
+			listener.onGuiClosed(dismissing);
 	}
 
 	public static void showGui(Gui gui) {
