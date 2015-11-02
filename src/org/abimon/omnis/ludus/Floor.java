@@ -11,8 +11,8 @@ import org.abimon.omnis.util.ExtraArrays;
 
 public class Floor implements Cloneable{
 	ConcurrentHashMap<Integer, Tile[][]> floor = new ConcurrentHashMap<Integer, Tile[][]>();
-	
-	
+
+
 	final int FLOOR_SCALE_X = 32;
 	final int FLOOR_SCALE_Y = 32;
 
@@ -23,6 +23,48 @@ public class Floor implements Cloneable{
 		setLayer(LayerList.BACKGROUND_LAYER, new Tile[1][1]);
 	}
 
+	public static Floor loadFromData(String floorName, Data data){
+		try{
+			if(data == null)
+				return null;
+			else{
+				ZipData zip = new ZipData(data);
+				Floor floor = new Floor(floorName);
+				Data keys = zip.get("Keys.txt");
+				if(keys == null)
+					return null;
+				for(String key : zip.keySet())
+					if(key.startsWith("Layer"))
+					{
+						String layerNum = key.replace("Layer", "").replace(".txt", "");
+						if(!layerNum.matches("\\d+"))
+							continue;
+						Data layer = zip.get(key);
+						String[] layerStrings = layer.getAsStringArray();
+						System.out.println(layer);
+						Tile[][] tiles = new Tile[layerStrings.length][layerStrings[0].replace("|", "").length()];
+						for(int x = 0; x < tiles.length; x++)
+						{
+							for(int y = 0; y < tiles[x].length; y++)
+							{
+								String name = layerStrings[x].split("\\|")[y];
+								for(String s : keys.getAsStringArray())
+									if(s.split("\\=", 2)[1].trim().equalsIgnoreCase(name))
+										name = s.split("\\=", 2)[0];
+								tiles[x][y] = Ludus.getRegisteredTile(name);
+							}
+						}
+						floor.setLayer(Integer.parseInt(layerNum), tiles);
+					}
+				return floor;
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public static Floor loadFromFile(String file){
 		try{
 			if(!Ludus.hasData(file))
@@ -30,7 +72,6 @@ public class Floor implements Cloneable{
 			else
 			{
 				Data data = Ludus.getData(file);
-				System.out.println(data);
 				if(data == null)
 					return null;
 				else{
@@ -118,7 +159,7 @@ public class Floor implements Cloneable{
 			for(int y = 0; y < layer[x].length; y++)
 				if(layer[x][y] != null)
 					graphics.drawImage(layer[x][y].getIcon(), x * FLOOR_SCALE_X, y * FLOOR_SCALE_Y, FLOOR_SCALE_X, FLOOR_SCALE_Y, null);
-		
+
 		imageLayers.put(layerNo, floorImage);
 		graphics.dispose();
 	}
@@ -139,7 +180,7 @@ public class Floor implements Cloneable{
 					height = layer[0].length;
 		return height;
 	}
-	
+
 	public int getWidth() {
 		return getTileWidth() * FLOOR_SCALE_X;
 	}
