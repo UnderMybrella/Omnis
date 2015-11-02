@@ -14,8 +14,8 @@ import org.abimon.omnis.ludus.Tile;
 import org.abimon.omnis.ludus.Tiled;
 import org.abimon.omnis.ludus.gui.GuiEventChoice;
 import org.abimon.omnis.ludus.gui.GuiTextOverlay;
+import org.abimon.omnis.reflect.Function;
 import org.abimon.omnis.util.General;
-import org.abimon.reflect.Function;
 
 @SuppressWarnings("unused")
 public class NagitosHopeMachine {

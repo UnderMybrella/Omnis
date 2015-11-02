@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import org.abimon.omnis.ludus.Ludus;
-import org.abimon.reflect.Function;
+import org.abimon.omnis.reflect.Function;
 
 public class GuiEventChoice extends GuiTextOverlay {
 
