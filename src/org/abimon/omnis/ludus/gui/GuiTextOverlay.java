@@ -14,10 +14,10 @@ import org.abimon.omnis.util.General;
 
 public class GuiTextOverlay implements Gui{
 
-	String line = "";
 	int step = -1;
 	long waitingOn = 0L;
 	public LinkedList<String> text = null;
+	public final String originalText;
 	public BufferedImage[] imgs;
 	public BufferedImage[] arrow;
 	public Font font;
@@ -37,7 +37,7 @@ public class GuiTextOverlay implements Gui{
 	}
 
 	public GuiTextOverlay(String text, String textBoxLocation, Font font){
-		line = text;
+		originalText = text;
 		this.font = font;
 		imgs = General.getImagesInGrid(Ludus.getDataUnsafe(textBoxLocation).getAsImage(), 3, 3);
 		arrow = General.getImagesInGrid(Ludus.getDataUnsafe("resources/Arrow.png").getAsImage(), 2, 2);
@@ -95,16 +95,16 @@ public class GuiTextOverlay implements Gui{
 		if(text == null)
 		{
 			text = new LinkedList<String>();
-			for(String str : line.split("\n")){
+			for(String str : originalText.split("\n")){
 				String[] strings = getSubstrings(str, g, metrics, (width - imgs[1].getWidth() - imgs[7].getWidth()));
 				for(String s : strings)
 					text.add(s.trim());
 			}
 		}
 
-		double fontLineHeight = metrics.getHeight() * 1.75;
-		int lines = Math.min(3, text.size());
-		int height = (int) ((fontLineHeight * lines) + imgs[0].getHeight() + imgs[2].getHeight());
+		double fontoriginalTextHeight = metrics.getHeight() * 1.75;
+		int originalTexts = Math.min(3, text.size());
+		int height = (int) ((fontoriginalTextHeight * originalTexts) + imgs[0].getHeight() + imgs[2].getHeight());
 
 		BufferedImage textBox = constructTextBox(width, height);
 		
@@ -112,7 +112,7 @@ public class GuiTextOverlay implements Gui{
 		coords.y += Ludus.mainWindow.getFloor().getHeight() - textBox.getHeight();
 
 		g.drawImage(textBox, coords.x, coords.y, null);
-		for(int i = 0; i < lines; i++){
+		for(int i = 0; i < originalTexts; i++){
 			g.drawString(text.get(i), coords.x + ((int) (imgs[0].getWidth() * 1.5)), (int) (i * (font.getSize() * 1.25)) + coords.y + ((int) (imgs[0].getHeight() * 2.5)));
 		}
 
@@ -134,23 +134,23 @@ public class GuiTextOverlay implements Gui{
 		g.drawImage(arrow[step], coords.x + width - (int) (imgs[8].getWidth() * 2.5), coords.y + textBox.getHeight() - (int) (imgs[8].getHeight() * 2.5), null);
 	}
 
-	public static String[] getSubstrings(String line, Graphics g, FontMetrics metrics, int width) {
-		String[] lines = new String[(int) (metrics.getStringBounds(line, g).getWidth() / width) + 1];
-		for(int i = 0; i < lines.length - 1; i++){
-			String subline = "";
+	public static String[] getSubstrings(String originalText, Graphics g, FontMetrics metrics, int width) {
+		String[] originalTexts = new String[(int) (metrics.getStringBounds(originalText, g).getWidth() / width) + 1];
+		for(int i = 0; i < originalTexts.length - 1; i++){
+			String suboriginalText = "";
 			int j = 0;
-			for(; j < line.length(); j++){
-				subline += line.charAt(j);
-				if((int) (metrics.getStringBounds(subline, g).getWidth() / width) != 0)
+			for(; j < originalText.length(); j++){
+				suboriginalText += originalText.charAt(j);
+				if((int) (metrics.getStringBounds(suboriginalText, g).getWidth() / width) != 0)
 					break;
 			}
-			int lastSpace = subline.lastIndexOf(' ');
-			subline = subline.substring(0, lastSpace);
-			line = line.substring(lastSpace);
-			lines[i] = subline;
+			int lastSpace = suboriginalText.lastIndexOf(' ');
+			suboriginalText = suboriginalText.substring(0, lastSpace);
+			originalText = originalText.substring(lastSpace);
+			originalTexts[i] = suboriginalText;
 		}
-		lines[lines.length - 1] = line;
-		return lines;
+		originalTexts[originalTexts.length - 1] = originalText;
+		return originalTexts;
 	}
 
 	@Override

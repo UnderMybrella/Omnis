@@ -44,8 +44,8 @@ public class Ludus
 		guiInUse.dismiss();
 		
 		Gui dismissing = guiInUse;
-		guiInUse = null;
 		mainWindow.removeKeyListener(guiInUse);
+		guiInUse = null;
 		
 		for(GuiListener listener : guiListeners)
 			listener.onGuiClosed(dismissing);
