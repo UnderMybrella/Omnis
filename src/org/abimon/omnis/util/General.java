@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class General {
@@ -116,5 +117,12 @@ public class General {
 			for(int y = 0; y < height; y++)
 				imgs[x * width + y] = img.getSubimage(x * (img.getWidth() / width), y * (img.getHeight() / height), img.getWidth() / width, img.getHeight() / height);
 		return imgs;
+	}
+	
+	public static <K, V> HashMap<K, V> createHashmap(K[] keys, V[] values){
+		HashMap<K, V> hashmap = new HashMap<K, V>();
+		for(int i = 0; i < keys.length; i++)
+			hashmap.put(keys[i], i < values.length ? values[i] : null);
+		return hashmap;
 	}
 }

@@ -21,6 +21,8 @@ public class GuiTextOverlay implements Gui{
 	public BufferedImage[] imgs;
 	public BufferedImage[] arrow;
 	public Font font;
+	
+	protected Point coords;
 
 	public GuiTextOverlay(String text){
 		this(text, "resources/TextBox.png");
@@ -39,6 +41,46 @@ public class GuiTextOverlay implements Gui{
 		this.font = font;
 		imgs = General.getImagesInGrid(Ludus.getDataUnsafe(textBoxLocation).getAsImage(), 3, 3);
 		arrow = General.getImagesInGrid(Ludus.getDataUnsafe("resources/Arrow.png").getAsImage(), 2, 2);
+	}
+
+	public BufferedImage constructTextBox(int width, int height){
+		BufferedImage textBox = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics txt = textBox.getGraphics();
+		int widthDifference = width - imgs[0].getWidth() - imgs[6].getWidth();
+		txt.drawImage(imgs[0], 0, 0, null);
+		for(int x = 0; x < widthDifference / imgs[3].getWidth(); x++)
+			txt.drawImage(imgs[3], imgs[0].getWidth() + x * imgs[3].getWidth(), 0, null);
+		if(widthDifference % imgs[3].getWidth() != 0)
+			txt.drawImage(imgs[3], widthDifference, 0, null);
+		txt.drawImage(imgs[6], width - imgs[6].getWidth(), 0, null);
+
+		int heightDifference = height - imgs[0].getHeight() - imgs[2].getHeight();
+		for(int y = 0; y < heightDifference / imgs[1].getHeight(); y++){
+			txt.drawImage(imgs[1], 0, imgs[0].getHeight() + y * imgs[1].getHeight(), null);
+			for(int x = 0; x < widthDifference / imgs[3].getWidth(); x++)
+				txt.drawImage(imgs[4], imgs[1].getWidth() + x * imgs[4].getWidth(), imgs[1].getHeight() + y * imgs[4].getHeight(), null);
+			if(widthDifference % imgs[4].getWidth() != 0)
+				txt.drawImage(imgs[4], widthDifference, imgs[1].getHeight() + y * imgs[4].getHeight(), null);
+			txt.drawImage(imgs[7], width - imgs[7].getWidth(), imgs[1].getHeight() + y * imgs[7].getHeight(), null);
+		}
+
+		if(heightDifference % imgs[1].getHeight() != 0){
+			int y = heightDifference / imgs[1].getHeight();
+			txt.drawImage(imgs[1], 0, imgs[0].getHeight() + y * imgs[1].getHeight(), imgs[1].getWidth(), heightDifference % imgs[1].getHeight(), null);
+			for(int x = 0; x < widthDifference / imgs[3].getWidth(); x++)
+				txt.drawImage(imgs[4], imgs[1].getWidth() + x * imgs[4].getWidth(), imgs[1].getHeight() + y * imgs[4].getHeight(), imgs[4].getWidth(), heightDifference % imgs[4].getHeight(), null);
+			if(widthDifference % imgs[3].getWidth() != 0)
+				txt.drawImage(imgs[4], widthDifference, imgs[1].getHeight() + y * imgs[4].getHeight(), null);
+			txt.drawImage(imgs[7], width - imgs[7].getWidth(), imgs[1].getHeight() + y * imgs[7].getHeight(), imgs[7].getWidth(), heightDifference % imgs[7].getHeight(), null);
+		}
+
+		txt.drawImage(imgs[2], 0, height - imgs[2].getHeight(), null);
+		for(int x = 0; x < widthDifference / imgs[6].getWidth(); x++)
+			txt.drawImage(imgs[5], imgs[2].getWidth() + x * imgs[5].getWidth(), height - imgs[5].getHeight(), null);
+		if(widthDifference % imgs[3].getWidth() != 0)
+			txt.drawImage(imgs[5], widthDifference, height - imgs[5].getHeight(), null);
+		txt.drawImage(imgs[8], width - imgs[8].getWidth(), height - imgs[2].getHeight(), null);
+		return textBox;
 	}
 
 	@Override
@@ -63,44 +105,15 @@ public class GuiTextOverlay implements Gui{
 		double fontLineHeight = metrics.getHeight() * 1.75;
 		int lines = Math.min(3, text.size());
 		int height = (int) ((fontLineHeight * lines) + imgs[0].getHeight() + imgs[2].getHeight());
-		Point coords = General.getStartingPoint(Ludus.mainWindow.getWidth(), Ludus.mainWindow.getHeight(), width, Ludus.mainWindow.getFloor().getHeight());
 
-		BufferedImage textBox = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics txt = textBox.getGraphics();
-		int widthDifference = width - imgs[0].getWidth() - imgs[6].getWidth();
-		txt.drawImage(imgs[0], 0, 0, null);
-		for(int x = 0; x < widthDifference / imgs[3].getWidth(); x++)
-			txt.drawImage(imgs[3], imgs[0].getWidth() + x * imgs[3].getWidth(), 0, null);
-		if(widthDifference % imgs[3].getWidth() == 0);
-		txt.drawImage(imgs[6], width - imgs[6].getWidth(), 0, null);
+		BufferedImage textBox = constructTextBox(width, height);
+		
+		coords = General.getStartingPoint(Ludus.mainWindow.getWidth(), Ludus.mainWindow.getHeight(), width, Ludus.mainWindow.getFloor().getHeight());
+		coords.y += Ludus.mainWindow.getFloor().getHeight() - textBox.getHeight();
 
-		int heightDifference = height - imgs[0].getHeight() - imgs[2].getHeight();
-		for(int y = 0; y < heightDifference / imgs[1].getHeight(); y++){
-			txt.drawImage(imgs[1], 0, imgs[0].getHeight() + y * imgs[1].getHeight(), null);
-			for(int x = 0; x < widthDifference / imgs[3].getWidth(); x++)
-				txt.drawImage(imgs[4], imgs[1].getWidth() + x * imgs[4].getWidth(), imgs[1].getHeight() + y * imgs[4].getHeight(), null);
-			if(widthDifference % imgs[3].getWidth() == 0);
-			txt.drawImage(imgs[7], width - imgs[7].getWidth(), imgs[1].getHeight() + y * imgs[7].getHeight(), null);
-		}
-
-		if(heightDifference % imgs[1].getHeight() != 0){
-			int y = heightDifference / imgs[1].getHeight();
-			txt.drawImage(imgs[1], 0, imgs[0].getHeight() + y * imgs[1].getHeight(), imgs[1].getWidth(), heightDifference % imgs[1].getHeight(), null);
-			for(int x = 0; x < widthDifference / imgs[3].getWidth(); x++)
-				txt.drawImage(imgs[4], imgs[1].getWidth() + x * imgs[4].getWidth(), imgs[1].getHeight() + y * imgs[4].getHeight(), imgs[4].getWidth(), heightDifference % imgs[4].getHeight(), null);
-			if(widthDifference % imgs[3].getWidth() == 0);
-			txt.drawImage(imgs[7], width - imgs[7].getWidth(), imgs[1].getHeight() + y * imgs[7].getHeight(), imgs[7].getWidth(), heightDifference % imgs[7].getHeight(), null);
-		}
-
-		txt.drawImage(imgs[2], 0, height - imgs[2].getHeight(), null);
-		for(int x = 0; x < widthDifference / imgs[6].getWidth(); x++)
-			txt.drawImage(imgs[5], imgs[2].getWidth() + x * imgs[5].getWidth(), height - imgs[5].getHeight(), null);
-		if(widthDifference % imgs[3].getWidth() == 0);
-		txt.drawImage(imgs[8], width - imgs[8].getWidth(), height - imgs[2].getHeight(), null);
-
-		g.drawImage(textBox, coords.x, coords.y + Ludus.mainWindow.getFloor().getHeight() - textBox.getHeight(), null);
+		g.drawImage(textBox, coords.x, coords.y, null);
 		for(int i = 0; i < lines; i++){
-			g.drawString(text.get(i), coords.x + ((int) (imgs[0].getWidth() * 1.5)), (int) (i * (font.getSize() * 1.25)) + coords.y + Ludus.mainWindow.getFloor().getHeight() - textBox.getHeight() + ((int) (imgs[0].getHeight() * 2.5)));
+			g.drawString(text.get(i), coords.x + ((int) (imgs[0].getWidth() * 1.5)), (int) (i * (font.getSize() * 1.25)) + coords.y + ((int) (imgs[0].getHeight() * 2.5)));
 		}
 
 		if(step < 0)
@@ -118,7 +131,7 @@ public class GuiTextOverlay implements Gui{
 				waitingOn = System.currentTimeMillis() + 250;
 			}
 		}
-		g.drawImage(arrow[step], coords.x + width - (int) (imgs[8].getWidth() * 2.5), coords.y + Ludus.mainWindow.getFloor().getHeight() - (int) (imgs[8].getHeight() * 2.5), null);
+		g.drawImage(arrow[step], coords.x + width - (int) (imgs[8].getWidth() * 2.5), coords.y + textBox.getHeight() - (int) (imgs[8].getHeight() * 2.5), null);
 	}
 
 	public static String[] getSubstrings(String line, Graphics g, FontMetrics metrics, int width) {

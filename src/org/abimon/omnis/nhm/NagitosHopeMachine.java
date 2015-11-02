@@ -12,8 +12,12 @@ import org.abimon.omnis.ludus.LayerList;
 import org.abimon.omnis.ludus.Ludus;
 import org.abimon.omnis.ludus.Tile;
 import org.abimon.omnis.ludus.Tiled;
+import org.abimon.omnis.ludus.gui.GuiEventChoice;
 import org.abimon.omnis.ludus.gui.GuiTextOverlay;
+import org.abimon.omnis.util.General;
+import org.abimon.reflect.Function;
 
+@SuppressWarnings("unused")
 public class NagitosHopeMachine {
 
 	public static Tile air = new Tile("NHM:air", "air", "", false);
@@ -21,6 +25,7 @@ public class NagitosHopeMachine {
 	public static Tile rock = new Tile("NHM:rock", "rock", "resources/Rock.png", true);
 	public static Tile flower = new AnimatedTile("NHM:flower", "flower", "resources/flower.ani", false);
 	public static Tile sea = new AnimatedTile("NHM:seaAnimated", "sea", "resources/sea.ani", true);
+	public static Font font;
 
 	//public static Tile sea = new Tile("NHM:sea", "sea", "resources/sea.png");
 
@@ -62,11 +67,16 @@ public class NagitosHopeMachine {
 		//System.out.println(swahili.translate("English", "I will like me", " ", ""));
 
 		try{
-			Font font = Font.createFont(Font.TRUETYPE_FONT, Ludus.getDataUnsafe("resources/DefaultFont.ttf").getAsInputStream());
-			Ludus.showGui(new GuiTextOverlay("I am a potato\nBut I can also be many potatoes\nAnd many potatoes can also be me; We will be an army", font.deriveFont(24f)));
+			font = Font.createFont(Font.TRUETYPE_FONT, Ludus.getDataUnsafe("resources/DefaultFont.ttf").getAsInputStream()).deriveFont(24f);
+			Ludus.showGui(new GuiEventChoice("I am a potato\nBut I can also be many potatoes\nAnd many potatoes can also be me; We will be an army\nAre you a potato", General.createHashmap(new String[]{"Are you a potato"}, new String[][]{{"Yes", "No"}}), General.createHashmap(new String[]{"Are you a potato"}, new Function[]{Function.getUnsafe(NagitosHopeMachine.class, "potatoResponse", String.class)}), "resources/TextBox.png", font));
 		}
 		catch(Throwable th){
 			th.printStackTrace();
 		}
+	}
+	
+	public static void potatoResponse(String chosenResponse){
+		Ludus.dismissGui();
+		Ludus.showGui(new GuiTextOverlay("You chose: " + chosenResponse, font));
 	}
 }

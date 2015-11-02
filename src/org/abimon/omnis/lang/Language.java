@@ -2,6 +2,7 @@ package org.abimon.omnis.lang;
 
 import java.util.HashMap;
 
+@SuppressWarnings("unused")
 public class Language {
 
 	private String sentanceStructure = "subject tense verb object";
