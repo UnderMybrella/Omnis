@@ -5,7 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -137,5 +139,20 @@ public class General {
 		for(int i = 0; i < keys.length; i++)
 			hashmap.put(keys[i], i < values.length ? values[i] : null);
 		return hashmap;
+	}
+	
+	public static File getRunningLocation(){
+		try {
+			return new File(General.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+		} catch (URISyntaxException e) {}
+		return null;
+	}
+	
+	public static boolean runningInTerminal(){
+		if(System.console() != null)
+			return true;
+		else if(getRunningLocation().isDirectory())
+			return true;
+		return false;
 	}
 }
