@@ -27,4 +27,8 @@ public enum EnumOS {
 	public File getStorageLocation(String folderName){
 		return new File(storageLocation + folderName);
 	}
+
+	public boolean hasANSI() {
+		return this == MACOSX || this == LINUX;
+	}
 }
