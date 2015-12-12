@@ -6,12 +6,21 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import static org.abimon.omnis.util.EnumANSI.*;
+
 public class General {
+
+	public static EnumOS OS = EnumOS.OTHER;
+
+	static{
+		OS = EnumOS.determineOS();
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T extends Cloneable> T clone(T cloning){
@@ -38,7 +47,7 @@ public class General {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Joins an array with a newline between each element
 	 * @param lines
@@ -50,7 +59,7 @@ public class General {
 			s += str + "\n";
 		return s.trim();
 	}
-	
+
 	/**
 	 * Converts a given Image into a BufferedImage
 	 *
@@ -59,20 +68,20 @@ public class General {
 	 */
 	public static BufferedImage toBufferedImage(Image img)
 	{
-	    if (img instanceof BufferedImage)
-	    {
-	        return (BufferedImage) img;
-	    }
+		if (img instanceof BufferedImage)
+		{
+			return (BufferedImage) img;
+		}
 
-	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
-	    Graphics2D bGr = bimage.createGraphics();
-	    bGr.drawImage(img, 0, 0, null);
-	    bGr.dispose();
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
 
-	    return bimage;
+		return bimage;
 	}
-	
+
 	/**
 	 * Checks if two images are equal
 	 * @param img
@@ -94,7 +103,7 @@ public class General {
 				}
 		return true;
 	}
-	
+
 	/**
 	 * Checks if two images are equal
 	 * @param img
@@ -118,14 +127,14 @@ public class General {
 				}
 		return diff.toArray(new Point[0]);
 	}
-	
+
 	public static Point getStartingPoint(int width, int height, int imgWidth, int imgHeight){
 		int xPos = (width / 2) - (imgWidth / 2);
 		int yPos = (height / 2) - (imgHeight / 2);
-		
+
 		return new Point(xPos, yPos);
 	}
-	
+
 	public static BufferedImage[] getImagesInGrid(BufferedImage img, int width, int height){
 		BufferedImage[] imgs = new BufferedImage[width * height];
 		for(int x = 0; x < width; x++)
@@ -133,26 +142,79 @@ public class General {
 				imgs[x * width + y] = img.getSubimage(x * (img.getWidth() / width), y * (img.getHeight() / height), img.getWidth() / width, img.getHeight() / height);
 		return imgs;
 	}
-	
+
 	public static <K, V> HashMap<K, V> createHashmap(K[] keys, V[] values){
 		HashMap<K, V> hashmap = new HashMap<K, V>();
 		for(int i = 0; i < keys.length; i++)
 			hashmap.put(keys[i], i < values.length ? values[i] : null);
 		return hashmap;
 	}
-	
+
 	public static File getRunningLocation(){
 		try {
 			return new File(General.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
 		} catch (URISyntaxException e) {}
 		return null;
 	}
-	
+
 	public static boolean runningInTerminal(){
 		if(System.console() != null)
 			return true;
 		else if(getRunningLocation().isDirectory())
 			return true;
 		return false;
+	}
+
+	public static int runMenu(String menuGreeting, String[] menu){
+		if(OS.hasANSI())
+			System.out.print(CURSOR_ERASESCREEN.getCursor(2) + CURSOR_POS.getCursor("0;0"));
+		System.out.println(menuGreeting);
+		System.out.println("Menu: ");
+		for(String s : menu)
+			System.out.println("   > " + s);
+		int selected = 0;
+		try{
+			InputStream in = System.in;
+			while(true){
+				if(OS.hasANSI()){
+					for(int i = 0; i < menu.length; i++){
+						System.out.print(CURSOR_POS.getCursor((i + 3) + ";" + (4)));
+						if(i == selected)
+							System.out.print(">");
+						else
+							System.out.print(" ");
+						System.out.print(CURSOR_POS.getCursor((i + 3) + ";" + (menu[i].length() + 7)));
+						if(i == selected)
+							System.out.print("<");
+						else
+							System.out.print(" ");
+					}
+				}
+				if(OS.hasANSI())
+					System.out.print(CURSOR_POS.getCursor((menu.length + 3) + ";" + 1));
+				byte[] data = new byte[4];
+				in.read(data);
+				if(data[0] == 27 && data[1] == 91)
+					if(data[2] == 65)
+						selected--;
+					else if(data[2] == 66)
+						selected++;
+				
+				if(data[0] == 119 || data[0] == 87)
+					selected--;
+				else if(data[0] == 115 || data[0] == 83)
+					selected++;
+				
+				if(selected < 0)
+					selected = 0;
+				else if(selected >= menu.length)
+					selected = menu.length - 1;
+				if(data[0] == 10)
+					return selected;
+			}
+		}
+		catch(Throwable th){
+		}
+		return 0;
 	}
 }

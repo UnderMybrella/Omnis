@@ -76,6 +76,10 @@ public enum EnumANSI {
 	}
 	
 	public String getCursor(String cells){
-		return toString().replace(controlCode, cells + controlCode);
+		return toString().replace(controlCode + "m", cells + controlCode);
+	}
+	
+	public String getCursor(int cells){
+		return getCursor(Integer.toString(cells));
 	}
 }
