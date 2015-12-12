@@ -7,6 +7,8 @@ public class Website {
 	String ip;
 	
 	public Website(String ip){
+		if(!ip.startsWith("http") && !ip.startsWith("https"))
+			ip = "http://" + ip;
 		this.ip = ip;
 	}
 	
@@ -18,7 +20,9 @@ public class Website {
 			http.close();
 			return new String(data);
 		}
-		catch(Throwable th){}
+		catch(Throwable th){
+			th.printStackTrace();
+		}
 		return "";
 	}
 }
