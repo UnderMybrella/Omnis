@@ -18,7 +18,7 @@ public class ScrollPanel extends Panel implements IScrolling{
 	int componentMax;
 	int componentPosition = 0;
 
-	public ScrollPanel(TextGUI gui, int componentMax){
+	public ScrollPanel(int componentMax){
 		this.componentMax = componentMax;
 	}
 
