@@ -17,10 +17,23 @@ public interface DataPool
 	public boolean hasData(String name);
 	
 	/**
+	 * Gets all the names in this data pool (All 'keys')
+	 * @return
+	 */
+	public String[] getAllDataNames();
+	
+	/**
 	 * Get the data corresponding to the key 'name' 
 	 * @param name The 'key' for the data
 	 * @return the Data corresponding to key 'name', or null if the pool doesn't contain an object for the key 'name'
 	 * @throws IOException if there is an IOException while reading the data
 	 */
 	public Data getData(String name) throws IOException;
+	
+	/**
+	 * Gets all data in the data pool
+	 * @return All data in this data pool
+	 * @throws IOException
+	 */
+	public Data[] getAllData() throws IOException;
 }

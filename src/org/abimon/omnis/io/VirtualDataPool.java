@@ -21,4 +21,14 @@ public class VirtualDataPool implements DataPool {
 		return pool.get(name);
 	}
 
+	@Override
+	public String[] getAllDataNames() {
+		return pool.keySet().toArray(new String[0]);
+	}
+
+	@Override
+	public Data[] getAllData() throws IOException {
+		return pool.values().toArray(new Data[0]);
+	}
+
 }

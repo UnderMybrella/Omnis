@@ -2,6 +2,7 @@ package org.abimon.omnis.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class FolderDataPool implements DataPool{
 
@@ -18,18 +19,18 @@ public class FolderDataPool implements DataPool{
 	 */
 	public File getFileValue(String name){
 		if(folder.isDirectory())
-			for(File f : folder.listFiles()){
+			for(String s : iterate(folder)){
 				try{
-					if(f.getPath().equals(name) || f.getPath().startsWith(name) || f.getPath().matches(name))
-						return f;
-					if(f.getPath().equals(folder.getPath() + File.separator + name) || f.getPath().startsWith(folder.getPath() + File.separator + name) || f.getPath().matches(folder.getPath() + File.separator + name))
-						return f;
+					if(s.equals(name) || s.startsWith(name) || s.matches(name))
+						return new File(s);
+					if(s.equals(folder.getPath() + File.separator + name) || s.startsWith(folder.getPath() + File.separator + name) || s.matches(folder.getPath() + File.separator + name))
+						return new File(s);
 				}
 				catch(Throwable th){}
 			}
 		return null;
 	}
-	
+
 	@Override
 	public boolean hasData(String name) {
 		return getFileValue(name) != null;
@@ -40,6 +41,31 @@ public class FolderDataPool implements DataPool{
 		File value = getFileValue(name);
 		if(value != null)
 			return new Data(value);
+		return null;
+	}
+
+	@Override
+	public String[] getAllDataNames() {
+		return iterate(folder);
+	}
+
+	public String[] iterate(File folder){
+		if(folder == null || !folder.isDirectory())
+			return new String[]{folder.toString()};
+		LinkedList<String> names = new LinkedList<String>();
+		for(File f : folder.listFiles())
+			if(f.isDirectory())
+				for(String s : iterate(f)){
+					names.add(s);
+				}
+			else{
+				names.add(f.toString());
+			}
+		return names.toArray(new String[0]);
+	}
+
+	@Override
+	public Data[] getAllData() throws IOException {
 		return null;
 	}
 

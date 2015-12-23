@@ -42,11 +42,11 @@ public class Ludus
 
 	public static void dismissGui() {
 		guiInUse.dismiss();
-		
+
 		Gui dismissing = guiInUse;
 		mainWindow.removeKeyListener(guiInUse);
 		guiInUse = null;
-		
+
 		for(GuiListener listener : guiListeners)
 			listener.onGuiClosed(dismissing);
 	}
@@ -54,7 +54,7 @@ public class Ludus
 	public static void showGui(Gui gui) {
 		if(guiInUse != null){
 			dismissGui();
-			
+
 			for(GuiListener listener : guiListeners)
 				listener.onGuiReplaced(guiInUse, gui);
 		}
@@ -64,11 +64,11 @@ public class Ludus
 		}
 		guiInUse = gui;
 		mainWindow.addKeyListener(guiInUse);
-		
+
 		for(GuiListener listener : guiListeners)
 			listener.onGuiOpened(guiInUse);
 	}
-	
+
 	public static void addGuiListener(GuiListener listener) {
 		guiListeners.add(listener);
 	}
@@ -117,7 +117,7 @@ public class Ludus
 		DataPool pool = new ClassLoaderDataPool(loader);
 		dataPools.add(pool);
 	}
-	
+
 	public static void registerDataPool(DataPool pool){
 		dataPools.add(pool);
 	}
@@ -151,6 +151,38 @@ public class Ludus
 			if(pool.hasData(name))
 				return pool.getData(name);
 		return null;
+	}
+
+	public static Data getAllDataUnsafe(String name){
+		try{
+			for(DataPool pool : dataPools)
+				if(pool.hasData(name))
+					return pool.getData(name);
+		}
+		catch(Throwable th){
+			th.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String[] getAllDataNames(String regex) throws IOException{
+		HashMap<String, Data> data = new HashMap<String, Data>(); //Use a hashmap to prevent double-ups of data
+		for(DataPool pool : dataPools)
+			for(String name : pool.getAllDataNames())
+				if(name.matches(regex))
+					if(pool.hasData(name))
+						data.put(name, pool.getData(name));
+		return data.keySet().toArray(new String[0]);
+	}
+
+	public static Data[] getAllData(String regex) throws IOException{
+		HashMap<String, Data> data = new HashMap<String, Data>(); //Use a hashmap to prevent double-ups of data
+		for(DataPool pool : dataPools)
+			for(String name : pool.getAllDataNames())
+				if(name.matches(regex))
+					if(pool.hasData(name))
+						data.put(name, pool.getData(name));
+		return data.values().toArray(new Data[0]);
 	}
 
 	public static Data getDataUnsafe(String name){
