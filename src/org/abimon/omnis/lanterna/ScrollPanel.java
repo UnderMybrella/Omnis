@@ -10,7 +10,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.ComponentRenderer;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.TextGUI;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 
 public class ScrollPanel extends Panel implements IScrolling{
