@@ -7,7 +7,7 @@ public enum EnumOS {
 	WINDOWS(System.getProperty("user.home") + File.separator),
 	MACOSX(System.getProperty("user.home") + "/Library/Application Support/"),
 	LINUX(System.getProperty("user.home") + File.separator),
-	OTHER;
+	OTHER(System.getProperty("user.home") + File.separator);
 	
 	String storageLocation = "Omnis";
 	
@@ -21,11 +21,13 @@ public enum EnumOS {
 		String os = System.getProperty("os.name").toLowerCase();
 		if(os.contains("mac"))
 			return MACOSX;
+		if(os.contains("windows"))
+			return WINDOWS;
 		return OTHER;
 	}
 	
 	public File getStorageLocation(String folderName){
-		return new File(storageLocation + folderName);
+		return new File(storageLocation, folderName);
 	}
 
 	public boolean hasANSI() {
