@@ -55,11 +55,14 @@ public class Language {
 
 					addWord(otherLanguage, other, differ);
 				}
-				else
+				else{
+					String differenceHere = "";
+					String differenceThere = "";
 					for(int j = 0; j < languageToLearn[i].split(splitter).length; j++)
 					{
-
+						
 					}
+				}
 			}
 			else{
 				if(splitter.equals("")){

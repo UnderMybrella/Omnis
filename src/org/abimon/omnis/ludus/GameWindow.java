@@ -57,6 +57,8 @@ public class GameWindow extends JFrame{
 		int width = this.getWidth();
 		int height = this.getHeight();
 
+		if(floor == null)
+			return;
 		int imgWidth = floor.getTileWidth() * floor.FLOOR_SCALE_X;
 		int imgHeight = floor.getTileHeight() * floor.FLOOR_SCALE_Y;
 

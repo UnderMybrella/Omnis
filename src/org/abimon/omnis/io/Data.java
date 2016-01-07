@@ -40,8 +40,15 @@ public class Data {
 	}
 
 	public Data(InputStream in) throws IOException{
-		data = new byte[in.available()];
-		in.read(data);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		while(true){
+			byte[] tmpData = new byte[1024];
+			int read = in.read(tmpData);
+			if(read <= 0)
+				break;
+			baos.write(tmpData);
+		}
+		data = baos.toByteArray();
 		in.close();
 	}
 
@@ -49,6 +56,8 @@ public class Data {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		while(true){
 			byte[] tmpData = new byte[1024];
+			if(in.available() == 0)
+				break;
 			int read = in.read(tmpData);
 			if(read <= 0)
 				break;

@@ -194,7 +194,7 @@ public class Ludus
 		catch(Throwable th){
 			th.printStackTrace();
 		}
-		return null;
+		return new Data();
 	}
 
 	public static void registerKeyListener(KeyListener listener){

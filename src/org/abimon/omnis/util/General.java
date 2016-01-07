@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -216,5 +218,33 @@ public class General {
 		catch(Throwable th){
 		}
 		return 0;
+	}
+	
+	/**
+	 * 
+	 * @param date
+	 * @param formattingString dd for day, mm for month, yyyy for year
+	 * @return
+	 */
+	public static String formatDate(Date date, String formattingString){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		String formatted = formattingString;
+		formatted = formatted.replace("dd", "" + cal.get(Calendar.DAY_OF_MONTH));
+		formatted = formatted.replace("mm", "" + (cal.get(Calendar.MONTH) + 1));
+		formatted = formatted.replace("yyyy", "" + cal.get(Calendar.YEAR));
+		
+		formatted = formatted.replace("hh", "" + cal.get(Calendar.HOUR_OF_DAY));
+		formatted = formatted.replace("min", "" + cal.get(Calendar.MINUTE));
+		formatted = formatted.replace("ss", "" + cal.get(Calendar.SECOND));
+		return formatted;
+	}
+	
+	public static String formatDate(Date date){
+		return formatDate(date, "dd-mm-yyyy hh:min:ss");
+	}
+	
+	public static String formatDate(){
+		return formatDate(new Date());
 	}
 }

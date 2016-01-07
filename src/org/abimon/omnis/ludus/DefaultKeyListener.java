@@ -8,6 +8,7 @@ public class DefaultKeyListener implements KeyListener, Runnable {
 	private Thread internalThread = new Thread(this);
 
 	public DefaultKeyListener(){
+		internalThread.setDaemon(true);
 		internalThread.start();
 	}
 

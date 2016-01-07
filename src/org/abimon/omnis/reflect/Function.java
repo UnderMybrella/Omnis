@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import org.abimon.omnis.util.EnumObjects;
 
-public class Function {
+public class Function implements Runnable{
 	
 	Method func;
 	Object obj;
@@ -28,6 +28,10 @@ public class Function {
 		func = object.getClass().getMethod(methodName, classes);
 		this.obj = object;
 		this.args = params;
+	}
+	
+	public Method getFunction(){
+		return func;
 	}
 	
 	public void setParams(Object[] params){
@@ -62,18 +66,31 @@ public class Function {
 				this.args[i] = args[i];
 	}
 	
-	public void invoke(Object... params) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
-		func.invoke(obj, params);
+	public Object invoke(Object... params) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		return func.invoke(obj, params);
 	}
 	
-	public void invokeUnsafe(Object... params){
+	public Object invokeUnsafe(Object... params){
 		try{
-			func.invoke(obj, params);
+			return func.invoke(obj, params);
 		}
 		catch(Throwable th){}
+		return null;
 	}
 	
-	public void invokePartially(Object... params) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	public Object invoke() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		return func.invoke(obj, args);
+	}
+	
+	public Object invokeUnsafe(){
+		try{
+			return func.invoke(obj, args);
+		}
+		catch(Throwable th){}
+		return null;
+	}
+	
+	public Object invokePartially(Object... params) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		Object[] tmpArgs = new Object[Math.min(args.length, params.length)];
 		for(int i = 0; i < tmpArgs.length; i++)
 			if(params[i] == null)
@@ -82,10 +99,10 @@ public class Function {
 				tmpArgs[i] = null;
 			else
 				tmpArgs[i] = params[i];
-		func.invoke(obj, tmpArgs);
+		return func.invoke(obj, tmpArgs);
 	}
 	
-	public void invokeUnsafePartially(Object... params){
+	public Object invokeUnsafePartially(Object... params){
 		try{
 			if(args == null || args.length == 0)
 				args = new Object[params.length];
@@ -97,11 +114,12 @@ public class Function {
 					tmpArgs[i] = null;
 				else
 					tmpArgs[i] = params[i];
-			func.invoke(obj, tmpArgs);
+			return func.invoke(obj, tmpArgs);
 		}
 		catch(Throwable th){
 			th.printStackTrace();
 		}
+		return null;
 	}
 
 	public static Function getUnsafe(Class<?> staticClass, String name, Class<?>... params) {
@@ -112,5 +130,10 @@ public class Function {
 			th.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public void run() {
+		invokeUnsafe();
 	}
 }
