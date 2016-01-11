@@ -61,6 +61,24 @@ public class General {
 			s += str + "\n";
 		return s.trim();
 	}
+	
+	public static boolean doesFirstComeBeforeSecond(String first, String second){
+		first = first.toLowerCase();
+		second = second.toLowerCase();
+		
+		if(second.length() < first.length())
+			return false;
+		if(second.length() > first.length())
+			return true;
+		
+		for(int i = 0; i < first.length(); i++)
+			if(first.charAt(i) > second.charAt(i))
+				return false;
+			else if(first.charAt(i) < second.charAt(i))
+				return true;
+		
+		return true;
+	}
 
 	/**
 	 * Converts a given Image into a BufferedImage

@@ -28,12 +28,14 @@ public class ScrollWindow extends BasicWindow {
 		if(key.getKeyType() == KeyType.ArrowDown && getPos() < (getMax() - 1))
 		{
 			((IScrolling) getComponent()).setScrollPos(getPos() + 1);
-			next = (Interactable) getChildren().get(getPos());
+			if(getChildren().get(getPos()) instanceof Interactable)
+				next = (Interactable) getChildren().get(getPos());
 		}
 		else if(key.getKeyType() == KeyType.ArrowUp && getPos() > 0)
 		{
 			((IScrolling) getComponent()).setScrollPos(getPos() - 1);
-			next = (Interactable) getChildren().get(getPos());
+			if(getChildren().get(getPos()) instanceof Interactable)
+				next = (Interactable) getChildren().get(getPos());
 		}
 		else
 			super.handleInput(key);
