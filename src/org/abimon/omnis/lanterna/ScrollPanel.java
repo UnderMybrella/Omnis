@@ -33,22 +33,29 @@ public class ScrollPanel extends Panel implements IScrolling{
 			public TerminalSize getPreferredSize(Panel component) {
 				List<Component> components = new ArrayList<Component>();
 				components.addAll(getChildren());
-				List<Component> childComponents = new ArrayList<Component>();
+				List<Component> childComponents = new ArrayList<Component>(componentMax);
 
 				if((componentPosition + componentMax) > components.size()){
 					int start = componentMax > components.size() ? 0 : components.size() - componentMax;
 					for(int i = start; i < components.size(); i++){
-						childComponents.add(components.get(i));
+						Component child = components.get(i);
+						child.setPosition(new TerminalPosition(component.getPosition().getColumn(), component.getPosition().getRow() + (i - componentPosition)));
+						child.setSize(new TerminalSize(child.getPreferredSize().getColumns()+10,child.getPreferredSize().getRows()));
+						childComponents.add(child);
 					}
 				}
 				else if(componentPosition > componentMax){
-					for(int i = componentPosition; i < Math.min(componentMax + componentPosition, components.size()); i++)
-						childComponents.add(components.get(i));
+					for(int i = componentPosition; i < Math.min(componentMax + componentPosition, components.size()); i++){
+						Component child = components.get(i);
+						childComponents.add(child);
+					}
 				}
 				else
-					for(int i = 0; i < Math.min(componentMax, components.size()); i++)
-						childComponents.add(components.get(i));
-				//ReflectionHelper.setObjectFromVariable(Panel.class, component, "cachedPreferredSize", );
+					for(int i = 0; i < Math.min(componentMax, components.size()); i++){
+						Component child = components.get(i);
+						childComponents.add(child);
+					}
+				ReflectionHelper.setObjectFromVariable(component, "needsReLayout", true);
 				return getLayoutManager().getPreferredSize(childComponents);
 			}
 
@@ -61,7 +68,7 @@ public class ScrollPanel extends Panel implements IScrolling{
 					for(int i = componentPosition; i < Math.min(componentMax + componentPosition, components.size()); i++){
 						Component child = components.get(i);
 						child.setPosition(new TerminalPosition(component.getPosition().getColumn(), component.getPosition().getRow() + (i - componentPosition)));
-						child.setSize(new TerminalSize(child.getPreferredSize().getColumns(),1));
+						child.setSize(new TerminalSize(child.getPreferredSize().getColumns(),child.getPreferredSize().getRows()));
 						TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
 						child.draw(componentGraphics);
 					}
@@ -70,7 +77,7 @@ public class ScrollPanel extends Panel implements IScrolling{
 					for(int i = start; i < components.size(); i++){
 						Component child = components.get(i);
 						child.setPosition(new TerminalPosition(component.getPosition().getColumn(), component.getPosition().getRow() + (i - start)));
-						child.setSize(new TerminalSize(child.getPreferredSize().getColumns(),1));
+						child.setSize(new TerminalSize(child.getPreferredSize().getColumns(),child.getPreferredSize().getRows()));
 						TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
 						child.draw(componentGraphics);
 					}

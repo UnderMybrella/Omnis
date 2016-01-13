@@ -25,7 +25,7 @@ public class ScrollWindow extends BasicWindow {
 	@Override
 	public boolean handleInput(KeyStroke key) {
 		Interactable next = null;
-		if(key.getKeyType() == KeyType.ArrowDown && getPos() < (getMax() - 1))
+		if(key.getKeyType() == KeyType.ArrowDown && getPos() < getMax() - 1)
 		{
 			((IScrolling) getComponent()).setScrollPos(getPos() + 1);
 			if(getChildren().get(getPos()) instanceof Interactable)
@@ -36,6 +36,22 @@ public class ScrollWindow extends BasicWindow {
 			((IScrolling) getComponent()).setScrollPos(getPos() - 1);
 			if(getChildren().get(getPos()) instanceof Interactable)
 				next = (Interactable) getChildren().get(getPos());
+		}
+		else if(key.getKeyType() == KeyType.ArrowLeft){
+			int pos = getPos();
+			
+			while(!(getChildren().get(pos--) instanceof Interactable) && pos > 0);
+			
+			if(getChildren().get(pos) instanceof Interactable)
+				next = (Interactable) getChildren().get(pos);
+		}
+		else if(key.getKeyType() == KeyType.ArrowRight){
+			int pos = getPos();
+			
+			while(!(getChildren().get(pos++) instanceof Interactable) && pos < getMax() - 1);
+			
+			if(getChildren().get(pos) instanceof Interactable)
+				next = (Interactable) getChildren().get(pos);
 		}
 		else
 			super.handleInput(key);
