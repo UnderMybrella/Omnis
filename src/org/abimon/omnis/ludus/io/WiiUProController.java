@@ -187,6 +187,44 @@ public class WiiUProController extends Thread implements Controller{
 			return RIGHT_PRESSED;
 		return false;
 	}
+	
+	@Override
+	public void setButtonPressed(String button, boolean pressed) {
+		if(button.equals("A"))
+			A_PRESSED = pressed;
+		if(button.equals("B"))
+			B_PRESSED = pressed;
+		if(button.equals("X"))
+			X_PRESSED = pressed;
+		if(button.equals("Y"))
+			Y_PRESSED = pressed;
+		
+		if(button.equals("L"))
+			L_PRESSED = pressed;
+		if(button.equals("R"))
+			R_PRESSED = pressed;
+		if(button.equals("ZL"))
+			ZL_PRESSED = pressed;
+		if(button.equals("ZR"))
+			ZR_PRESSED = pressed;
+
+		if(button.equals("START"))
+			START_PRESSED = pressed;
+		if(button.equals("SELECT"))
+			SELECT_PRESSED = pressed;
+
+		if(button.equals("HOME"))
+			HOME_PRESSED = pressed;
+		
+		if(button.equals("UP"))
+			UP_PRESSED = pressed;
+		if(button.equals("DOWN"))
+			DOWN_PRESSED = pressed;
+		if(button.equals("LEFT"))
+			LEFT_PRESSED = pressed;
+		if(button.equals("RIGHT"))
+			RIGHT_PRESSED = pressed;
+	}
 
 	@Override
 	public String[] getAnalogueSticks() {

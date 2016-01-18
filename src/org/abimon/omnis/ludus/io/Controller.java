@@ -9,6 +9,7 @@ public interface Controller {
 	
 	public String[] getAllButtons();
 	public boolean isButtonPressed(String button);
+	public void setButtonPressed(String button, boolean pressed);
 	
 	public String[] getAnalogueSticks();
 	public int getAnalogueStickX(String stick);
