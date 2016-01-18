@@ -42,6 +42,9 @@ public class ScrollWindow extends BasicWindow {
 			
 			while(!(getChildren().get(pos--) instanceof Interactable) && pos > 0);
 			
+			if(pos < 0)
+				pos = 0;
+			
 			if(getChildren().get(pos) instanceof Interactable)
 				next = (Interactable) getChildren().get(pos);
 		}
@@ -49,6 +52,9 @@ public class ScrollWindow extends BasicWindow {
 			int pos = getPos();
 			
 			while(!(getChildren().get(pos++) instanceof Interactable) && pos < getMax() - 1);
+			
+			if(pos >= getMax())
+				pos = getMax() - 1;
 			
 			if(getChildren().get(pos) instanceof Interactable)
 				next = (Interactable) getChildren().get(pos);
