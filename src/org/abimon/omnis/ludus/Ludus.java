@@ -138,7 +138,15 @@ public class Ludus
 		DataPool pool = new FolderDataPool(folder);
 		dataPools.add(pool);
 	}
+	
+	public static boolean removeDataPool(DataPool pool){
+		return dataPools.remove(pool);
+	}
 
+	public static void clearDataPools(){
+		dataPools.clear();
+	}
+	
 	public static boolean hasData(String name){
 		for(DataPool pool : dataPools)
 			if(pool.hasData(name))
