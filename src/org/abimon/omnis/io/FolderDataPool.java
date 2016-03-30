@@ -22,9 +22,9 @@ public class FolderDataPool implements DataPool{
 			for(String s : iterate(folder)){
 				try{
 					if(s.equals(name) || s.startsWith(name) || s.matches(name))
-						return new File(s);
+						return new File(folder.getAbsolutePath() + File.separator + s);
 					if(s.equals(folder.getPath() + File.separator + name) || s.startsWith(folder.getPath() + File.separator + name) || s.matches(folder.getPath() + File.separator + name))
-						return new File(s);
+						return new File(folder.getAbsolutePath() + File.separator + s);
 				}
 				catch(Throwable th){}
 			}
@@ -59,14 +59,18 @@ public class FolderDataPool implements DataPool{
 					names.add(s);
 				}
 			else{
-				names.add(f.toString());
+				names.add(f.getAbsolutePath().replace(this.folder.getAbsolutePath() + File.separator, ""));
 			}
 		return names.toArray(new String[0]);
 	}
 
 	@Override
 	public Data[] getAllData() throws IOException {
-		return null;
+		String[] allFiles = iterate(folder);
+		LinkedList<Data> data = new LinkedList<Data>();
+		for(String s : allFiles)
+			data.add(new Data(folder.getAbsolutePath() + s));
+		return data.toArray(new Data[0]);
 	}
 
 }

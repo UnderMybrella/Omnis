@@ -1,6 +1,7 @@
 package org.abimon.omnis.net;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -66,39 +67,57 @@ public class Webserver implements Runnable{
 				final Socket client = server.accept();
 				new Thread(){
 					public void run(){
-						try{
-							Data data = new Data(client.getInputStream(), false);
+						while(true){
+							try{
+								Data data = new Data(client.getInputStream(), false);
 
-							String request = "";
-							for(String s : data.getAsString().split("\n"))
-								if(s.startsWith("GET"))
-									request = s.substring(5).replace(" HTTP/1.1", "").trim();
+								String request = "";
+								boolean keepAlive = false;
 
-							if(log != null)
-								log.println(client + " requested " + data.getAsString() + ", " + data.toArray().length + " bytes");
-							for(Function func : onMessage){
-								try{
-									byte[] returnedData = (byte[]) func.invoke(client, data.toArray(), request);
-									if(log != null)
-										log.println(func.getFunction().getDeclaringClass() + "." + func.getFunction().getName() + " returned " + returnedData.length + " bytes");
-									client.getOutputStream().write(returnedData);
+								for(String s : data.getAsString().split("\n"))
+									if(s.startsWith("GET"))
+										request = s.substring(5).replace(" HTTP/1.1", "").trim();
+								
+								if(data.getAsString().contains("keep-alive"))
+										keepAlive = true;
+
+								if(log != null)
+									log.println(client + " requested " + data.getAsString() + ", " + data.toArray().length + " bytes");
+								for(Function func : onMessage){
+									try{
+										byte[] returnedData = (byte[]) func.invoke(client, data.toArray(), request);
+										if(log != null)
+											log.println(func.getFunction().getDeclaringClass() + "." + func.getFunction().getName() + " returned " + returnedData.length + " bytes");
+										client.getOutputStream().write(returnedData);
+										client.getOutputStream().write("\n".getBytes());
+									}
+									catch(Throwable th){
+										if(log != null)
+											th.printStackTrace(log);
+									}
 								}
-								catch(Throwable th){
-									if(log != null)
-										th.printStackTrace(log);
-								}
+
+								Thread.sleep(1000);
+
+								client.getOutputStream().flush();
+
+								if(log != null)
+									log.flush();
+
+
+								if(!keepAlive)
+									break;
 							}
-
-							client.getOutputStream().flush();
-							client.getOutputStream().close();
-
-							if(log != null)
-								log.flush();
+							catch(Throwable th){
+								if(log != null)
+									th.printStackTrace(log);
+								th.printStackTrace();
+							}
 						}
-						catch(Throwable th){
-							if(log != null)
-								th.printStackTrace(log);
-							th.printStackTrace();
+						try {
+							client.close();
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
 					}
 				}.start();

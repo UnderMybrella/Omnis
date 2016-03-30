@@ -1,5 +1,9 @@
 package org.abimon.omnis.ludus.io;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import com.codeminders.hidapi.HIDDevice;
 
 public interface Controller {
@@ -21,6 +25,11 @@ public interface Controller {
 	public int getAnalogueStickXNegativeBoundary(String stick);
 	public int getAnalogueStickYNegativeBoundary(String stick);
 	
-	public Controller getNewInstance(HIDDevice device);
+	/** 'out' and 'in' are optional and may be null */
+	public Controller getNewInstance(HIDDevice device, OutputStream out, InputStream in);
+	
+	public void vibrate(long millis) throws IOException;
+	
+	public OutputStream getOutputStream();
 	
 }

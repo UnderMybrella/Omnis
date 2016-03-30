@@ -45,7 +45,8 @@ public class WiiUProController extends Thread implements Controller{
 	public int RIGHT_STICK_VERTICAL;
 
 	public byte[] recentData;
-	
+	public boolean[] leds;
+
 	public WiiUProController(){}
 
 	public WiiUProController(InputStream in, OutputStream out){
@@ -112,19 +113,6 @@ public class WiiUProController extends Thread implements Controller{
 
 		System.out.println("Left Horizontal: " + LEFT_STICK_HORIZONTAL);
 	}
-	
-	public void setLEDs(boolean[] leds) throws IOException{
-		boolean[] ledU = new boolean[4];
-		for(int i = 0; i < Math.min(leds.length, 4); i++)
-			ledU[i] = leds[i];
-		
-		byte mask = 0;
-		for(int i = 0; i < 4; i++)
-			if(ledU[i])
-				mask += Math.pow(2, 4+i);
-		
-		out.write(new byte[]{(byte) 162, 17, mask});
-	}
 
 	public void run(){
 		while(true){
@@ -159,7 +147,7 @@ public class WiiUProController extends Thread implements Controller{
 			return X_PRESSED;
 		if(button.equals("Y"))
 			return Y_PRESSED;
-		
+
 		if(button.equals("L"))
 			return L_PRESSED;
 		if(button.equals("R"))
@@ -176,7 +164,7 @@ public class WiiUProController extends Thread implements Controller{
 
 		if(button.equals("HOME"))
 			return HOME_PRESSED;
-		
+
 		if(button.equals("UP"))
 			return UP_PRESSED;
 		if(button.equals("DOWN"))
@@ -187,7 +175,7 @@ public class WiiUProController extends Thread implements Controller{
 			return RIGHT_PRESSED;
 		return false;
 	}
-	
+
 	@Override
 	public void setButtonPressed(String button, boolean pressed) {
 		if(button.equals("A"))
@@ -198,7 +186,7 @@ public class WiiUProController extends Thread implements Controller{
 			X_PRESSED = pressed;
 		if(button.equals("Y"))
 			Y_PRESSED = pressed;
-		
+
 		if(button.equals("L"))
 			L_PRESSED = pressed;
 		if(button.equals("R"))
@@ -215,7 +203,7 @@ public class WiiUProController extends Thread implements Controller{
 
 		if(button.equals("HOME"))
 			HOME_PRESSED = pressed;
-		
+
 		if(button.equals("UP"))
 			UP_PRESSED = pressed;
 		if(button.equals("DOWN"))
@@ -258,7 +246,7 @@ public class WiiUProController extends Thread implements Controller{
 	public int getAnalogueStickYPositiveBoundary(String stick) {
 		return 128;
 	}
-	
+
 	@Override
 	public int getAnalogueStickXNegativeBoundary(String stick) {
 		return -128;
@@ -284,7 +272,47 @@ public class WiiUProController extends Thread implements Controller{
 	}
 
 	@Override
-	public Controller getNewInstance(HIDDevice device) {
-		return new WiiUProController(new HIDInputStream(device), new HIDOutputStream(device));
+	public Controller getNewInstance(HIDDevice device, OutputStream out, InputStream in) {
+		return new WiimoteController(in != null ? in : new HIDInputStream(device), out != null ? out :new HIDOutputStream(device));
+	}
+
+	@Override
+	public void vibrate(final long millis) throws IOException {
+		out.write(new byte[]{(byte) 0xA2, 0x11, 0x01});
+		new Thread(){
+			public void run(){
+				long waiting = millis;
+				while(waiting > 0){
+					try{
+						waiting -= 100;
+						Thread.sleep(100);
+					}
+					catch(Throwable th){}
+				}
+				try{
+					out.write(new byte[]{(byte) 0xA2, 0x11, 0x0});
+				}
+				catch(Throwable th){}
+			}
+		}.start();
+		setLEDs(this.leds);
+	}
+
+	public void setLEDs(boolean[] leds) throws IOException{
+		boolean[] ledU = new boolean[4];
+		for(int i = 0; i < Math.min(leds.length, 4); i++)
+			ledU[i] = leds[i];
+
+		byte mask = 0;
+		for(int i = 0; i < 4; i++)
+			if(ledU[i])
+				mask += Math.pow(2, 4+i);
+		this.leds = ledU;
+		out.write(new byte[]{(byte) 162, 17, mask});
+	}
+
+	@Override
+	public OutputStream getOutputStream() {
+		return out;
 	}
 }

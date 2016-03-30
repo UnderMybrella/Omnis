@@ -2,6 +2,7 @@ package org.abimon.omnis.hid.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import com.codeminders.hidapi.HIDDevice;
 import com.codeminders.hidapi.HIDDeviceInfo;
@@ -26,6 +27,8 @@ public class HIDOutputStream extends OutputStream {
 	@Override
 	public void write(byte[] data) throws IOException {
 		device.write(data);
+		
+		System.out.println("Writing " + Arrays.toString(data));
 	}
 
 }

@@ -1,6 +1,8 @@
 package org.abimon.omnis.util;
 
 import java.lang.reflect.Array;
+import java.security.SecureRandom;
+import java.util.LinkedList;
 
 public class ExtraArrays{
 	
@@ -28,5 +30,55 @@ public class ExtraArrays{
 			copy[i] = copyArray;
 		}
 		return copy;
+	}
+	
+	public static <T> T[] randomise(T[] array){
+		LinkedList<T> list = new LinkedList<T>();
+		
+		while(list.size() < array.length){
+			int index = new SecureRandom().nextInt(array.length);
+			
+			if(array[index] != null){
+				list.add(array[index]);
+				array[index] = null;
+			}
+		}
+		
+		return list.toArray(array);
+	}
+	
+	public static <T> boolean contains(T[] array, T object){
+		for(T t : array)
+			if(t != null && t.equals(object))
+				return true;
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <X, Y> Y[] cast(X[] array, Class<Y> clazz){
+		Y[] casted = (Y[]) Array.newInstance(clazz, array.length);
+		
+		for(int i = 0; i < array.length; i++)
+			casted[i] = (Y) array[i];
+		
+		return casted;
+	}
+	
+	public static boolean[] cast(Boolean[] array){
+		boolean[] casted = new boolean[array.length];
+		
+		for(int i = 0; i < array.length; i++)
+			casted[i] = array[i];
+		
+		return casted;
+	}
+	
+	public static char[] cast(Character[] array){
+		char[] casted = new char[array.length];
+		
+		for(int i = 0; i < array.length; i++)
+			casted[i] = array[i];
+		
+		return casted;
 	}
 }

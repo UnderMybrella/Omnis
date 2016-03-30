@@ -17,6 +17,7 @@ import org.abimon.omnis.ludus.Tile;
 import org.abimon.omnis.ludus.Tiled;
 import org.abimon.omnis.ludus.gui.GuiEventChoice;
 import org.abimon.omnis.ludus.gui.GuiTextOverlay;
+import org.abimon.omnis.net.Pastebin;
 import org.abimon.omnis.net.Webserver;
 import org.abimon.omnis.reflect.Function;
 import org.abimon.omnis.util.General;
@@ -34,6 +35,9 @@ public class NagitosHopeMachine {
 	//public static Tile sea = new Tile("NHM:sea", "sea", "resources/sea.png");
 
 	public static void main(String[] args){
+		
+		System.out.println(new Pastebin("6121726c7b038aee0d4d48f3ff0fcbe5", "undermybrella", "nintendo").newPaste("Hello World!", "This is a beautiful test ;)"));
+		
 		Ludus.registerDataPool(NagitosHopeMachine.class.getClassLoader());
 		Ludus.registerDataPool(new File("resources"));
 		Ludus.registerDataPool(new File("maps"));

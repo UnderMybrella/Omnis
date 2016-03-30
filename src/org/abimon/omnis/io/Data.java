@@ -42,11 +42,11 @@ public class Data {
 	public Data(InputStream in) throws IOException{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		while(true){
-			byte[] tmpData = new byte[1024];
+			byte[] tmpData = new byte[8192];
 			int read = in.read(tmpData);
 			if(read <= 0)
 				break;
-			baos.write(tmpData);
+			baos.write(tmpData, 0, read);
 		}
 		data = baos.toByteArray();
 		in.close();

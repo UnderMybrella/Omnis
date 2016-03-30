@@ -247,7 +247,7 @@ public class General {
 	public static String formatDate(Date date, String formattingString){
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		String formatted = formattingString;
+		String formatted = formattingString.toLowerCase();
 		formatted = formatted.replace("dd", "" + cal.get(Calendar.DAY_OF_MONTH));
 		formatted = formatted.replace("mm", "" + (cal.get(Calendar.MONTH) + 1));
 		formatted = formatted.replace("yyyy", "" + cal.get(Calendar.YEAR));
