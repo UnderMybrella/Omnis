@@ -8,7 +8,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
+import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +38,33 @@ public class General {
 		return null;
 	}
 
+	public static String getMD5Hash(String s){
+		try{
+			byte[] bytesOfMessage = s.getBytes("UTF-8");
+
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] thedigest = md.digest(bytesOfMessage);
+			return new BigInteger(1, thedigest).toString(16);
+		}
+		catch(Throwable th){
+			return s;
+		}
+	}
+	
+	public static LinkedList<File> iterate(File dir, boolean includeDirs){
+		LinkedList<File> files = new LinkedList<File>();
+		
+		if(dir != null && dir.isDirectory() && dir.listFiles() != null)
+			for(File f : dir.listFiles()){
+				if(includeDirs || f.isFile())
+					files.add(f);
+				if(f.isDirectory())
+					files.addAll(iterate(f, includeDirs));
+			}
+		
+		return files;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T> T unsafeClone(T cloning){
 		if(cloning instanceof Cloneable){
@@ -61,22 +90,22 @@ public class General {
 			s += str + "\n";
 		return s.trim();
 	}
-	
+
 	public static boolean doesFirstComeBeforeSecond(String first, String second){
 		first = first.toLowerCase();
 		second = second.toLowerCase();
-		
+
 		if(second.length() < first.length())
 			return false;
 		if(second.length() > first.length())
 			return true;
-		
+
 		for(int i = 0; i < first.length(); i++)
 			if(first.charAt(i) > second.charAt(i))
 				return false;
 			else if(first.charAt(i) < second.charAt(i))
 				return true;
-		
+
 		return true;
 	}
 
@@ -219,12 +248,12 @@ public class General {
 						selected--;
 					else if(data[2] == 66)
 						selected++;
-				
+
 				if(data[0] == 119 || data[0] == 87)
 					selected--;
 				else if(data[0] == 115 || data[0] == 83)
 					selected++;
-				
+
 				if(selected < 0)
 					selected = 0;
 				else if(selected >= menu.length)
@@ -237,7 +266,7 @@ public class General {
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * 
 	 * @param date
@@ -251,17 +280,17 @@ public class General {
 		formatted = formatted.replace("dd", "" + cal.get(Calendar.DAY_OF_MONTH));
 		formatted = formatted.replace("mm", "" + (cal.get(Calendar.MONTH) + 1));
 		formatted = formatted.replace("yyyy", "" + cal.get(Calendar.YEAR));
-		
+
 		formatted = formatted.replace("hh", "" + cal.get(Calendar.HOUR_OF_DAY));
 		formatted = formatted.replace("min", "" + cal.get(Calendar.MINUTE));
 		formatted = formatted.replace("ss", "" + cal.get(Calendar.SECOND));
 		return formatted;
 	}
-	
+
 	public static String formatDate(Date date){
 		return formatDate(date, "dd-mm-yyyy hh:min:ss");
 	}
-	
+
 	public static String formatDate(){
 		return formatDate(new Date());
 	}
