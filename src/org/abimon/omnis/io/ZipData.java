@@ -53,6 +53,18 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 		}
 		out.close();
 	}
+	
+	public void writeToFile(File loc) throws IOException{
+		if(!loc.exists())
+			loc.createNewFile();
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(loc));
+		for(String s : this)
+		{
+			out.putNextEntry(new ZipEntry(s));
+			out.write(get(s).toArray());
+		}
+		out.close();
+	}
 
 	public void writeToFileUnsafe(String fileLoc){
 		try{

@@ -38,6 +38,10 @@ public class Data {
 		in.read(data);
 		in.close();
 	}
+	
+	public Data(byte[] data){
+		this.data = data;
+	}
 
 	public Data(InputStream in) throws IOException{
 		this(in, true);
@@ -75,6 +79,14 @@ public class Data {
 
 	public byte[] toArray(){
 		return Arrays.copyOf(data, data.length);
+	}
+	
+	public int length(){
+		return data.length;
+	}
+	
+	public int size(){
+		return data.length;
 	}
 
 	public String toString(){
