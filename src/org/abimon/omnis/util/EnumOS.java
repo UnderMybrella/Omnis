@@ -26,9 +26,14 @@ public enum EnumOS {
 		return OTHER;
 	}
 	
+	public static File getHomeLocation(){
+		return new File(System.getProperty("user.home"));
+	}
+	
 	public File getStorageLocation(String folderName){
 		return new File(storageLocation, folderName);
 	}
+
 
 	public boolean hasANSI() {
 		return this == MACOSX || this == LINUX;
