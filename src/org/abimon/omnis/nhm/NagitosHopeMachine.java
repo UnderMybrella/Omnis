@@ -21,6 +21,7 @@ import org.abimon.omnis.net.Pastebin;
 import org.abimon.omnis.net.Webserver;
 import org.abimon.omnis.reflect.Function;
 import org.abimon.omnis.util.General;
+import org.abimon.omnis.util.Translate;
 
 @SuppressWarnings("unused")
 public class NagitosHopeMachine {
@@ -47,6 +48,9 @@ public class NagitosHopeMachine {
 
 		Ludus.reloadIcons();
 
+		if(test("Translate"))
+			System.out.println(Translate.translate("detect", "english", "deus"));
+		
 		if(test("Floor"))
 			floorTest();
 
