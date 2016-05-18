@@ -19,7 +19,7 @@ import javax.imageio.ImageIO;
  */
 public class Data {
 
-	protected final byte[] data;
+	protected byte[] data;
 
 	/** 
 	 * Creates an empty data object. Only 1 kB of data is storable in this instance 
@@ -51,6 +51,11 @@ public class Data {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		while(true){
 			byte[] tmpData = new byte[1024];
+			
+			if(in.getClass().getName().equalsIgnoreCase("java.net.SocketInputStream"))
+				if(in.available() == 0)
+					break;
+			
 			int read = in.read(tmpData);
 			if(read <= 0)
 				break;
@@ -63,6 +68,17 @@ public class Data {
 
 	public Data(String str){
 		data = str.getBytes();
+	}
+	
+	public Data(BufferedImage img) {
+		try{
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ImageIO.write(img, "PNG", out);
+			out.close();
+			
+			data = out.toByteArray();
+		}
+		catch(Throwable th){}
 	}
 
 	/** Creates a data object by writing the object passed to the internal array 
@@ -79,6 +95,11 @@ public class Data {
 
 	public byte[] toArray(){
 		return Arrays.copyOf(data, data.length);
+	}
+	
+	/** Be VERY careful */
+	public byte[] getData(){
+		return data;
 	}
 	
 	public int length(){
@@ -127,8 +148,21 @@ public class Data {
 	}
 
 	public void write(File file) throws IOException {
+		
+		if(!file.exists())
+			file.createNewFile();
+		
 		FileOutputStream out = new FileOutputStream(file);
 		out.write(data);
 		out.close();
+	}
+
+	public Data append(byte b) {
+		byte[] newData = new byte[this.data.length + 1];
+		for(int i = 0; i < newData.length; i++)
+			newData[i] = data[i];
+		newData[data.length] = b;
+		this.data = newData;
+		return this;
 	}
 }
