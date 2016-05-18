@@ -24,7 +24,7 @@ public class Ludus
 	public static volatile Gui guiInUse;
 	public static volatile LinkedList<HUD> huds = new LinkedList<HUD>();
 
-	public static GameWindow mainWindow = new GameWindow();
+	public static GameWindow mainWindow = null;
 
 	public static final DefaultKeyListener defaultKeyListener = new DefaultKeyListener();
 	public static LinkedList<GuiListener> guiListeners = new LinkedList<GuiListener>();
