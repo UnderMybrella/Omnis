@@ -37,23 +37,29 @@ public class General {
 		}
 		return null;
 	}
-
 	public static String getMD5Hash(String s){
 		try{
-			byte[] bytesOfMessage = s.getBytes("UTF-8");
-
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] thedigest = md.digest(bytesOfMessage);
-			return new BigInteger(1, thedigest).toString(16);
+			return getMD5Hash(s.getBytes("UTF-8"));
 		}
 		catch(Throwable th){
 			return s;
 		}
 	}
-	
+
+	public static String getMD5Hash(byte[] bytes){
+		try{
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] thedigest = md.digest(bytes);
+			return new BigInteger(1, thedigest).toString(16);
+		}
+		catch(Throwable th){
+			return "";
+		}
+	}
+
 	public static LinkedList<File> iterate(File dir, boolean includeDirs){
 		LinkedList<File> files = new LinkedList<File>();
-		
+
 		if(dir != null && dir.isDirectory() && dir.listFiles() != null)
 			for(File f : dir.listFiles()){
 				if(includeDirs || f.isFile())
@@ -61,7 +67,7 @@ public class General {
 				if(f.isDirectory())
 					files.addAll(iterate(f, includeDirs));
 			}
-		
+
 		return files;
 	}
 
