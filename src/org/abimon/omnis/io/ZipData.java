@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,8 +42,43 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 		return dataStructure.toString();
 	}
 
+	public void write(String fileLoc) throws IOException{
+		File loc = new File(fileLoc);
+		if(!loc.exists())
+			loc.createNewFile();
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(loc));
+		for(String s : this)
+		{
+			out.putNextEntry(new ZipEntry(s));
+			out.write(get(s).toArray());
+		}
+		out.close();
+	}
+	
 	public void writeToFile(String fileLoc) throws IOException{
 		File loc = new File(fileLoc);
+		if(!loc.exists())
+			loc.createNewFile();
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(loc));
+		for(String s : this)
+		{
+			out.putNextEntry(new ZipEntry(s));
+			out.write(get(s).toArray());
+		}
+		out.close();
+	}
+	
+	public void writeTo(OutputStream os) throws IOException{
+		ZipOutputStream out = new ZipOutputStream(os);
+		for(String s : this)
+		{
+			out.putNextEntry(new ZipEntry(s));
+			out.write(get(s).toArray());
+		}
+		out.close();
+	}
+	
+	public void write(File loc) throws IOException{
 		if(!loc.exists())
 			loc.createNewFile();
 		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(loc));
