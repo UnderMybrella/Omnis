@@ -1,9 +1,12 @@
 package org.abimon.omnis.net;
 
+import java.awt.Desktop;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.cert.X509Certificate;
@@ -66,7 +69,11 @@ public class Website {
 	}
 
 	public Website(String ip){
-		if(!ip.startsWith("http") && !ip.startsWith("https"))
+		this(ip, false);
+	}
+	
+	public Website(String ip, boolean customProtocol){
+		if(!ip.startsWith("http") && !ip.startsWith("https") && !customProtocol)
 			ip = "http://" + ip;
 		this.ip = ip;
 	}
@@ -95,6 +102,8 @@ public class Website {
 
 	public Data retrieveData(Proxy proxy) {
 		try{
+//			if(proxy != null)
+//				return new Data();
 			HttpURLConnection http = (HttpURLConnection) new URL(ip).openConnection(proxy);
 			http.setRequestMethod("GET");
 			http.setRequestProperty("User-Agent", userAgent.equals("") ? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:44.0) Gecko/20100101 Firefox/44.0" : userAgent);
@@ -106,7 +115,7 @@ public class Website {
 			return new Data(http.getInputStream());
 		}
 		catch(Throwable th){
-			th.printStackTrace();
+			System.err.println(th);
 		}
 		return new Data();
 	}
@@ -133,6 +142,10 @@ public class Website {
 			th.printStackTrace();
 		}
 		return new Data();
+	}
+	
+	public void open() throws IOException{
+		Desktop.getDesktop().browse(URI.create(ip));
 	}
 
 	public static class POST{
