@@ -26,10 +26,26 @@ public class Webserver implements Runnable{
 	private Thread internalThread;
 
 	public Webserver(){
-		this(80, false);
+		this(80, false, true);
 	}
 
+	public Webserver(int port){
+		this(port, false, true);
+	}
+	
+	public Webserver(boolean closeAfterRequest){
+		this(80, false, closeAfterRequest);
+	}
+	
+	public Webserver(boolean logConnections, boolean closeAfterRequest){
+		this(80, logConnections, closeAfterRequest);
+	}
+	
 	public Webserver(int port, boolean logConnections){
+		this(port, logConnections, true);
+	}
+	
+	public Webserver(int port, boolean logConnections, boolean closeAfterRequest){
 		this.port = port;
 		if(logConnections){
 			try{
@@ -69,7 +85,12 @@ public class Webserver implements Runnable{
 					public void run(){
 						while(true){
 							try{
-								Data data = new Data(client.getInputStream(), false);
+
+								Data data = null;
+								int count = 0;
+								while((data = new Data(client.getInputStream(), false)).size() == 0 && count++ < 100){
+									Thread.sleep(10);
+								}
 
 								String request = "";
 								boolean keepAlive = false;
@@ -88,6 +109,8 @@ public class Webserver implements Runnable{
 										byte[] returnedData = (byte[]) func.invoke(client, data.toArray(), request);
 										if(log != null)
 											log.println(func.getFunction().getDeclaringClass() + "." + func.getFunction().getName() + " returned " + returnedData.length + " bytes");
+										if(returnedData == null || returnedData.length == 0)
+											continue;
 										client.getOutputStream().write(returnedData);
 										client.getOutputStream().write("\n".getBytes());
 									}
