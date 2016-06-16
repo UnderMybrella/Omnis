@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.Scanner;
 
+import org.abimon.omnis.io.Data;
 import org.abimon.omnis.io.ZipData;
 import org.abimon.omnis.lang.Language;
 import org.abimon.omnis.ludus.AnimatedTile;
@@ -20,8 +21,11 @@ import org.abimon.omnis.ludus.gui.GuiTextOverlay;
 import org.abimon.omnis.net.Pastebin;
 import org.abimon.omnis.net.Webserver;
 import org.abimon.omnis.reflect.Function;
+import org.abimon.omnis.reflect.ObjectFactory;
 import org.abimon.omnis.util.General;
 import org.abimon.omnis.util.Translate;
+
+import com.google.gson.JsonObject;
 
 @SuppressWarnings("unused")
 public class NagitosHopeMachine {
@@ -37,7 +41,13 @@ public class NagitosHopeMachine {
 
 	public static void main(String[] args){
 		
-		System.out.println(new Pastebin("6121726c7b038aee0d4d48f3ff0fcbe5", "undermybrella", "nintendo").newPaste("Hello World!", "This is a beautiful test ;)"));
+		JsonObject socketSchematic = new Data("{\"class\":\"java.net.Socket\", \"params\":[java.lang.String, java.lang.Integer], \"mapping\":{\"host\":0,\"port\":1}}").getAsJsonObject();
+		
+		Data obj = ObjectFactory.createObject(Data.class, new Data("{\"class\":\"org.abimon.omnis.io.Data\", \"params\":[128]}").getAsJsonObject());
+		
+		System.out.println("I created: " + obj);
+		
+		//System.out.println(new Pastebin("6121726c7b038aee0d4d48f3ff0fcbe5", "undermybrella", "nintendo").newPaste("Hello World!", "This is a beautiful test ;)"));
 		
 		Ludus.registerDataPool(NagitosHopeMachine.class.getClassLoader());
 		Ludus.registerDataPool(new File("resources"));
@@ -113,6 +123,7 @@ public class NagitosHopeMachine {
 			swahili.learn("English", " ", "", new String[]{"nitanipenda", "nitakupenda", "nitampenda"},  new String[]{"I will like me", "I will like you", "I will like him/her"});
 			swahili.learn("English", " ", "", new String[]{"nitanipenda", "nitanisumbua", "nitanipiga"},  new String[]{"I will like me", "I will annoy me", "I will beat me"});
 			System.out.println(swahili.translate("English", "I will like me", " ", ""));
+			System.out.println(swahili.translate("English", "like"));
 		}
 		catch(Throwable th){}
 	}

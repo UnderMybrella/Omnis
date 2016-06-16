@@ -1,6 +1,7 @@
 package org.abimon.omnis.reflect;
 
 import java.lang.reflect.Field;
+import java.util.LinkedList;
 
 public class ReflectionHelper {
 	
@@ -62,5 +63,36 @@ public class ReflectionHelper {
 		catch(Throwable th){}
 		
 		return null;
+	}
+	
+	public static boolean isRelative(Class<?> child, Class<?> suspectedSibling){
+		LinkedList<Class<?>> familyTree = new LinkedList<Class<?>>();
+		
+		for(Class<?> sibling : child.getInterfaces())
+			familyTree.add(sibling);
+		familyTree.add(child);
+		
+		Class<?> parent = child.getSuperclass();
+		
+		while(parent != null && parent != Object.class){
+			for(Class<?> sibling : parent.getInterfaces())
+				familyTree.add(sibling);
+			familyTree.add(parent);
+			parent = parent.getSuperclass();
+		}
+		
+		return familyTree.contains(suspectedSibling);
+	}
+	
+	public static Class<?> box(Class<?> parcel){
+		if(parcel == long.class)
+			return Long.class;
+		if(parcel == int.class)
+			return Integer.class;
+		if(parcel == short.class)
+			return Short.class;
+		if(parcel == byte.class)
+			return Byte.class;
+		return parcel;
 	}
 }

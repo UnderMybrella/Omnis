@@ -18,6 +18,7 @@ public class FolderDataPool implements DataPool{
 	 * @return The file object associated with the key, or null if no file is found
 	 */
 	public File getFileValue(String name){
+		name = name.replace("/", File.separator).replace("\\", File.separator);
 		if(folder.isDirectory())
 			for(String s : iterate(folder)){
 				try{
@@ -54,10 +55,11 @@ public class FolderDataPool implements DataPool{
 			return new String[]{folder.toString()};
 		LinkedList<String> names = new LinkedList<String>();
 		for(File f : folder.listFiles())
-			if(f.isDirectory())
+			if(f.isDirectory()){
 				for(String s : iterate(f)){
 					names.add(s);
 				}
+			}
 			else{
 				names.add(f.getAbsolutePath().replace(this.folder.getAbsolutePath() + File.separator, ""));
 			}

@@ -26,8 +26,9 @@ public class VirtualDirectory extends VirtualFile{
 	/** Returns null if the file cannot be found */
 	public VirtualFile search(String name){
 		for(VirtualFile file : subfiles){
-			if(file.name.equalsIgnoreCase(name) || file.toString().equalsIgnoreCase(name))
+			if(file.name.equalsIgnoreCase(name) || file.toString().equalsIgnoreCase(name)){
 				return file;
+			}
 			if(file instanceof VirtualDirectory){
 				VirtualFile results = ((VirtualDirectory) file).search(name);
 				if(results != null)

@@ -186,4 +186,14 @@ public class Website {
 		}
 
 	}
+
+	public boolean canConnect() {
+		try{
+			HttpURLConnection http = (HttpURLConnection) new URL(ip).openConnection();
+			http.disconnect();
+			return true;
+		}
+		catch(Throwable th){}
+		return false;
+	}
 }

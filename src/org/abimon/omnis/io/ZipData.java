@@ -18,24 +18,36 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import com.google.gson.JsonObject;
+
 public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 {
 	HashMap<String, Data> dataStructure = new HashMap<String, Data>();
 
 	public ZipData(){}
-	
+
+	public ZipData(ZipData data){
+		dataStructure = data.dataStructure;
+	}
+
 	public ZipData(Data data) throws IOException{
 		ZipInputStream in = new ZipInputStream(data.getAsInputStream());
 		ZipEntry entry = null;
 		while((entry = in.getNextEntry()) != null){
+			if(entry.getName().startsWith("__MACOSX"))
+				continue;
 			Data dat = new Data(in, false);
 			dataStructure.put(entry.getName(), dat);
 		}
 		in.close();
 	}
-	
+
 	public ZipData(ZipFile zip){
-		
+
+	}
+
+	public ZipData(File evidenceNames) throws IOException {
+		this(new Data(evidenceNames));
 	}
 
 	public String toString(){
@@ -54,7 +66,7 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 		}
 		out.close();
 	}
-	
+
 	public void writeToFile(String fileLoc) throws IOException{
 		File loc = new File(fileLoc);
 		if(!loc.exists())
@@ -67,7 +79,7 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 		}
 		out.close();
 	}
-	
+
 	public void writeTo(OutputStream os) throws IOException{
 		ZipOutputStream out = new ZipOutputStream(os);
 		for(String s : this)
@@ -77,7 +89,7 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 		}
 		out.close();
 	}
-	
+
 	public void write(File loc) throws IOException{
 		if(!loc.exists())
 			loc.createNewFile();
@@ -89,7 +101,7 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 		}
 		out.close();
 	}
-	
+
 	public void writeToFile(File loc) throws IOException{
 		if(!loc.exists())
 			loc.createNewFile();
@@ -235,5 +247,29 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 
 	public InputStream getAsInputStream(){
 		return new ByteArrayInputStream(data);
+	}
+
+	public static void removeEntry(ZipFile zip, String entry){
+
+	}
+
+	public JsonObject getAsJsonObject(String key) {
+		if(dataStructure.containsKey(key))
+			return dataStructure.get(key).getAsJsonObject();
+		return null;
+	}
+
+	public void extract(File dir) throws IOException{
+		for(String key : keySet()){
+			if(key.indexOf('/') != -1){
+				File dirs = new File(dir, key.substring(0, key.lastIndexOf('/')));
+				dirs.mkdirs();
+			}
+			File extraction = new File(dir, key);
+			if(extraction.isDirectory())
+				extraction.mkdir();
+			else
+				get(key).write(extraction);
+		}
 	}
 }

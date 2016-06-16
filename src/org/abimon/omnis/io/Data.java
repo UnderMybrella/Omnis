@@ -10,9 +10,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
+
+import org.abimon.omnis.util.General;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /** The Data class is capable of holding standard amounts of data (Up tp ~2 GB) 
  * @author Undermybrella
@@ -20,12 +28,26 @@ import javax.imageio.ImageIO;
 public class Data {
 
 	protected byte[] data;
+	private static JsonParser jsonParser;
+	
+	static{
+		jsonParser = new JsonParser();
+	}
 
 	/** 
 	 * Creates an empty data object. Only 1 kB of data is storable in this instance 
 	 */
 	public Data(){
 		data = new byte[1000];
+	}
+	
+	/**
+	 * Creates an empty data object with the length being the parameter 'length'.
+	 * Really only used for testing.
+	 * @param length
+	 */
+	public Data(int length){
+		data = new byte[length];
 	}
 
 	/** 
@@ -114,6 +136,15 @@ public class Data {
 		return data.length + " bytes of data stored";
 	}
 
+	public boolean equals(Object o){
+		if(o instanceof Data)
+			return (Arrays.equals(data, ((Data) o).data));
+		if(o instanceof byte[])
+			return (Arrays.equals(data, (byte[]) o));
+		
+		return false;
+	}
+	
 	//TODO: Data conversion
 
 	/**
@@ -132,7 +163,15 @@ public class Data {
 	}
 
 	public String getAsString(){
-		return new String(data);
+			return new String(data);
+	}
+	
+	public String getAsString(String encoding){
+		try {
+			return new String(data, encoding);
+		} catch (UnsupportedEncodingException e) {
+			return getAsString();
+		}
 	}
 
 	public String[] getAsStringArray(){
@@ -164,5 +203,23 @@ public class Data {
 		newData[data.length] = b;
 		this.data = newData;
 		return this;
+	}
+
+	public String getAsMD5Hash() {
+		return General.getMD5Hash(data);
+	}
+
+	//TODO: Json Stuff
+	
+	public JsonElement getAsJsonElement(){
+		return jsonParser.parse(getAsString());
+	}
+	
+	public JsonArray getAsJsonArray() {
+		return getAsJsonElement().getAsJsonArray();
+	}
+	
+	public JsonObject getAsJsonObject() {
+		return getAsJsonElement().getAsJsonObject();
 	}
 }

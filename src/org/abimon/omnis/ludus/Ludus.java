@@ -161,7 +161,7 @@ public class Ludus
 		return null;
 	}
 
-	public static Data getAllDataUnsafe(String name){
+	public static Data getDataUnsafe(String name){
 		try{
 			for(DataPool pool : dataPools)
 				if(pool.hasData(name))
@@ -191,18 +191,6 @@ public class Ludus
 					if(pool.hasData(name))
 						data.put(name, pool.getData(name));
 		return data.values().toArray(new Data[0]);
-	}
-
-	public static Data getDataUnsafe(String name){
-		try{
-			for(DataPool pool : dataPools)
-				if(pool.hasData(name))
-					return pool.getData(name);
-		}
-		catch(Throwable th){
-			th.printStackTrace();
-		}
-		return new Data();
 	}
 
 	public static void registerKeyListener(KeyListener listener){

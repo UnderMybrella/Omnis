@@ -70,6 +70,20 @@ public class General {
 
 		return files;
 	}
+	
+	public static LinkedList<File> iterateDirs(File dir){
+		LinkedList<File> files = new LinkedList<File>();
+		
+		files.add(dir);
+
+		if(dir != null && dir.isDirectory() && dir.listFiles() != null)
+			for(File f : dir.listFiles()){
+				if(f.isDirectory())
+					files.addAll(iterateDirs(f));
+			}
+
+		return files;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T unsafeClone(T cloning){
@@ -299,5 +313,21 @@ public class General {
 
 	public static String formatDate(){
 		return formatDate(new Date());
+	}
+	
+	public static String splitEveryXCharacters(String s, int chars){
+		String newS = "";
+		String tmp = "";
+		for(String word : s.split("\\s+")){
+			if((tmp + word).length() >= chars){
+				newS += tmp.trim() + "\n";
+				tmp = "";
+			}
+			tmp += word + " ";
+		}
+		
+		newS += tmp;
+		
+		return newS.trim();
 	}
 }
