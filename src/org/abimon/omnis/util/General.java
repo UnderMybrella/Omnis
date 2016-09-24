@@ -5,16 +5,22 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import static org.abimon.omnis.util.EnumANSI.*;
 
@@ -24,6 +30,20 @@ public class General {
 
 	static{
 		OS = EnumOS.determineOS();
+	}
+
+	public static String[] split(String s, String delimiter, int cap){
+		LinkedList<String> strings = new LinkedList<String>();
+
+		for(String str : s.split(delimiter + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)", cap)){
+			if(str.startsWith("\""))
+				str = str.substring(1);
+			if(str.endsWith("\""))
+				str = str.substring(0, str.length() - 1);
+			strings.add(str);
+		}
+
+		return strings.toArray(new String[0]);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -70,17 +90,20 @@ public class General {
 
 		return files;
 	}
-	
+
 	public static LinkedList<File> iterateDirs(File dir){
 		LinkedList<File> files = new LinkedList<File>();
-		
+
 		files.add(dir);
 
-		if(dir != null && dir.isDirectory() && dir.listFiles() != null)
-			for(File f : dir.listFiles()){
-				if(f.isDirectory())
-					files.addAll(iterateDirs(f));
-			}
+		try {
+			if (dir != null && dir.isDirectory() && dir.exists() && dir.listFiles() != null)
+				for (File f : dir.listFiles()) {
+					if (f.isDirectory())
+						files.addAll(iterateDirs(f));
+				}
+		}
+		catch(NullPointerException npe){} //W h y
 
 		return files;
 	}
@@ -314,7 +337,25 @@ public class General {
 	public static String formatDate(){
 		return formatDate(new Date());
 	}
-	
+
+	/** Formatting String: %day, %month, %year, %hh, %min, %sec*/
+	public static String timeDifference(LocalDateTime timeAgo, String formattingString){
+		LocalDateTime now = LocalDateTime.now();
+		String formatted = formattingString.toLowerCase();
+		
+		LocalDateTime modified = LocalDateTime.ofEpochSecond(now.toEpochSecond(ZoneOffset.UTC) - timeAgo.toEpochSecond(ZoneOffset.UTC), 0, ZoneOffset.UTC);
+		
+		formatted = formatted.replace("%day", Integer.toString(modified.getDayOfMonth() - 1));
+		formatted = formatted.replace("%month", Integer.toString(modified.getMonthValue() - 1));
+		formatted = formatted.replace("%year", Integer.toString(modified.getYear() - 1970));
+
+		formatted = formatted.replace("%hh", Integer.toString(modified.getHour()));
+		formatted = formatted.replace("%min", Integer.toString(modified.getMinute()));
+		formatted = formatted.replace("%sec", Integer.toString(modified.getSecond()));
+		
+		return formatted;
+	}
+
 	public static String splitEveryXCharacters(String s, int chars){
 		String newS = "";
 		String tmp = "";
@@ -325,9 +366,15 @@ public class General {
 			}
 			tmp += word + " ";
 		}
-		
+
 		newS += tmp;
-		
+
 		return newS.trim();
+	}
+
+	public static String printStackTrace(Throwable th){
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		th.printStackTrace(new PrintStream(baos));
+		return new String(baos.toByteArray());
 	}
 }

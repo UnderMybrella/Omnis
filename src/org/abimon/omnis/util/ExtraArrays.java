@@ -73,8 +73,44 @@ public class ExtraArrays{
 		return casted;
 	}
 	
+	public static short[] cast(Short[] array){
+		short[] casted = new short[array.length];
+		
+		for(int i = 0; i < array.length; i++)
+			casted[i] = array[i];
+		
+		return casted;
+	}
+	
+	public static Short[] cast(short[] array){
+		Short[] casted = new Short[array.length];
+		
+		for(int i = 0; i < array.length; i++)
+			casted[i] = array[i];
+		
+		return casted;
+	}
+	
 	public static char[] cast(Character[] array){
 		char[] casted = new char[array.length];
+		
+		for(int i = 0; i < array.length; i++)
+			casted[i] = array[i];
+		
+		return casted;
+	}
+	
+	public static byte[] cast(Byte[] array){
+		byte[] casted = new byte[array.length];
+		
+		for(int i = 0; i < array.length; i++)
+			casted[i] = array[i];
+		
+		return casted;
+	}
+	
+	public static Byte[] cast(byte[] array){
+		Byte[] casted = new Byte[array.length];
 		
 		for(int i = 0; i < array.length; i++)
 			casted[i] = array[i];

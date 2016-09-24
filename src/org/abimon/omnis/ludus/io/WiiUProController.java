@@ -273,7 +273,7 @@ public class WiiUProController extends Thread implements Controller{
 
 	@Override
 	public Controller getNewInstance(HIDDevice device, OutputStream out, InputStream in) {
-		return new WiimoteController(in != null ? in : new HIDInputStream(device), out != null ? out :new HIDOutputStream(device));
+		return new WiiUProController(in != null ? in : new HIDInputStream(device), out != null ? out :new HIDOutputStream(device));
 	}
 
 	@Override

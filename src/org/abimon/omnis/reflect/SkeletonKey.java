@@ -6,15 +6,19 @@ import java.lang.reflect.Method;
 public class SkeletonKey<L> {
 	
 	L lock;
+	Class<?> clazz;
 
+	public SkeletonKey(Class<L> clazz){
+		this.clazz = clazz;
+	}
+	
 	public SkeletonKey(L lock){
 		
-		Class<?> clazz = lock.getClass();
+		clazz = lock.getClass();
 		
 		for(Field f : clazz.getDeclaredFields())
 			f.setAccessible(true);
 		
-
 		for(Method m : clazz.getDeclaredMethods())
 			m.setAccessible(true);
 		
@@ -23,9 +27,17 @@ public class SkeletonKey<L> {
 	
 	public Object get(String fieldName){
 		try {
-			return lock.getClass().getField(fieldName);
+			Field field = clazz.getDeclaredField(fieldName);
+			field.setAccessible(true);
+			return field.get(lock);
 		} catch (SecurityException e) {
+			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
 		
 		return null;

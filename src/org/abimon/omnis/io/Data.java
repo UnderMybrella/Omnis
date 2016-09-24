@@ -66,19 +66,24 @@ public class Data {
 	}
 
 	public Data(InputStream in) throws IOException{
-		this(in, true);
+		this(in, true, true);
+	}
+	
+	public Data(InputStream in, boolean close) throws IOException{
+		this(in, close, true);
 	}
 
-	public Data(InputStream in, boolean close) throws IOException{
+	public Data(InputStream in, boolean close, boolean closeSocket) throws IOException{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		while(true){
 			byte[] tmpData = new byte[1024];
 			
-			if(in.getClass().getName().equalsIgnoreCase("java.net.SocketInputStream"))
+			if(closeSocket && (in.getClass().getName().equalsIgnoreCase("java.net.SocketInputStream") || in.getClass().getName().equalsIgnoreCase("java.util.zip.InflaterInputStream")))
 				if(in.available() == 0)
 					break;
 			
 			int read = in.read(tmpData);
+			
 			if(read <= 0)
 				break;
 			baos.write(tmpData, 0, read);
@@ -104,7 +109,7 @@ public class Data {
 	}
 
 	/** Creates a data object by writing the object passed to the internal array 
-	 * @throws IOException 
+	 * @throws IOException 	
 	 */
 	public Data(Serializable... objects) throws IOException{
 		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -187,9 +192,10 @@ public class Data {
 	}
 
 	public void write(File file) throws IOException {
-		
 		if(!file.exists())
 			file.createNewFile();
+		
+		//Add a check here
 		
 		FileOutputStream out = new FileOutputStream(file);
 		out.write(data);
@@ -201,6 +207,16 @@ public class Data {
 		for(int i = 0; i < newData.length; i++)
 			newData[i] = data[i];
 		newData[data.length] = b;
+		this.data = newData;
+		return this;
+	}
+	
+	public Data append(byte[] b) {
+		byte[] newData = new byte[this.data.length + b.length];
+		for(int i = 0; i < data.length; i++)
+			newData[i] = data[i];
+		for(int i = 0; i < b.length; i++)
+			newData[data.length + i] = b[i];
 		this.data = newData;
 		return this;
 	}

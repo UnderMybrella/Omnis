@@ -2,6 +2,7 @@ package org.abimon.omnis.nhm;
 
 import java.awt.Font;
 import java.io.File;
+import java.net.Socket;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -22,6 +23,7 @@ import org.abimon.omnis.net.Pastebin;
 import org.abimon.omnis.net.Webserver;
 import org.abimon.omnis.reflect.Function;
 import org.abimon.omnis.reflect.ObjectFactory;
+import org.abimon.omnis.reflect.schematics.JsonSchematic;
 import org.abimon.omnis.util.General;
 import org.abimon.omnis.util.Translate;
 
@@ -40,15 +42,25 @@ public class NagitosHopeMachine {
 	//public static Tile sea = new Tile("NHM:sea", "sea", "resources/sea.png");
 
 	public static void main(String[] args){
-		
-		JsonObject socketSchematic = new Data("{\"class\":\"java.net.Socket\", \"params\":[java.lang.String, java.lang.Integer], \"mapping\":{\"host\":0,\"port\":1}}").getAsJsonObject();
-		
+
+//		try{
+//			JsonObject socketSchematic = new Data("{\"class\":\"java.net.Socket\", \"params\":[java.lang.String, java.lang.Integer], \"mapping\":{\"host\":0,\"port\":1}}").getAsJsonObject();
+//			JsonSchematic schematic = new JsonSchematic(socketSchematic);
+//
+//			ObjectFactory.registerSchematic(schematic);
+//			System.out.println(ObjectFactory.createObject(Socket.class, new Data("{\"class\":\"java.net.Socket\", \"params\":{\"host\":\"localhost\", \"port\":3235}}").getAsJsonObject()));
+//		}
+//		catch(Throwable th){
+//			th.printStackTrace();
+//		}
+
+		Webserver webserver = new Webserver(1100, true, true);
+		webserver.addMessageFunction(Function.getUnsafe(NagitosHopeMachine.class, "onMessage", Socket.class, byte[].class, String.class));
+
 		Data obj = ObjectFactory.createObject(Data.class, new Data("{\"class\":\"org.abimon.omnis.io.Data\", \"params\":[128]}").getAsJsonObject());
-		
+
 		System.out.println("I created: " + obj);
-		
-		//System.out.println(new Pastebin("6121726c7b038aee0d4d48f3ff0fcbe5", "undermybrella", "nintendo").newPaste("Hello World!", "This is a beautiful test ;)"));
-		
+
 		Ludus.registerDataPool(NagitosHopeMachine.class.getClassLoader());
 		Ludus.registerDataPool(new File("resources"));
 		Ludus.registerDataPool(new File("maps"));
@@ -60,7 +72,7 @@ public class NagitosHopeMachine {
 
 		if(test("Translate"))
 			System.out.println(Translate.translate("detect", "english", "deus"));
-		
+
 		if(test("Floor"))
 			floorTest();
 
@@ -72,7 +84,7 @@ public class NagitosHopeMachine {
 
 		if(test("Date Format"))
 			System.out.println(General.formatDate(new Date(), "dd/mm/yyyy hh:min:ss"));
-		
+
 		if(test("Webserver")){
 			new Webserver(80, true).addMessageFunction(Webserver.DEFAULT_RETURN);
 		}
@@ -131,5 +143,10 @@ public class NagitosHopeMachine {
 	public static void potatoResponse(String chosenResponse){
 		Ludus.dismissGui();
 		Ludus.showGui(new GuiTextOverlay("You chose: " + chosenResponse, font));
+	}
+
+	public static byte[] onMessage(Socket socket, byte[] data, String request){
+		System.out.println(request);
+		return ("<html><body><h1>" + request + "</h1></body></html>").getBytes();
 	}
 }

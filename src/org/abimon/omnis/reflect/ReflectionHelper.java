@@ -1,5 +1,6 @@
 package org.abimon.omnis.reflect;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.LinkedList;
 
@@ -82,6 +83,36 @@ public class ReflectionHelper {
 		}
 		
 		return familyTree.contains(suspectedSibling);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> Constructor<T> getConstructor(Class<T> constructing, ClassWrapper<?>[] params){
+
+		for(Constructor<?> constructor : constructing.getDeclaredConstructors()){
+			Class<?>[] parameters = constructor.getParameterTypes();
+			if(parameters.length == 0 && params.length == 0)
+				return (Constructor<T>) constructor;
+
+			if(parameters.length != params.length)
+				continue;
+
+			boolean matches = true;
+
+			for(int i = 0; i < constructor.getParameterCount(); i++){
+				Class<?> parameter = parameters[i];
+				ClassWrapper<?> matching = params[i];
+
+				if(matching == null || !matching.equals(parameter)){
+					matches = false;
+					break;
+				}
+			}
+			
+			if(matches)
+				return (Constructor<T>) constructor;
+		}
+
+		return null;
 	}
 	
 	public static Class<?> box(Class<?> parcel){

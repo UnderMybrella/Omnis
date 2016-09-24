@@ -2,6 +2,7 @@ package org.abimon.omnis.io;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -271,5 +272,17 @@ public class ZipData extends Data implements Map<String, Data>, Iterable<String>
 			else
 				get(key).write(extraction);
 		}
+	}
+
+	public Data toData() throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ZipOutputStream out = new ZipOutputStream(baos);
+		for(String s : this)
+		{
+			out.putNextEntry(new ZipEntry(s));
+			out.write(get(s).toArray());
+		}
+		out.close();
+		return new Data(baos.toByteArray());
 	}
 }

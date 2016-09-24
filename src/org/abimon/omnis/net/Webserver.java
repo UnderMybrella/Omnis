@@ -21,7 +21,8 @@ public class Webserver implements Runnable{
 
 	ServerSocket server = null;
 
-	LinkedList<Function> onMessage = new LinkedList<Function>();
+	LinkedList<Function> onMessage = new LinkedList<>();
+	LinkedList<Function> dataResponse = new LinkedList<>();
 
 	private Thread internalThread;
 
@@ -70,69 +71,97 @@ public class Webserver implements Runnable{
 		onMessage.add(function);
 	}
 
+	/**
+	 * @param function Function Parameters: Socket, byte[] fullRequest, String requestedFile. Returns: String or null
+	 */
+	public void addResponseFunction(Function function) { dataResponse.add(function); }
+
 	@Override
 	public void run() {
-		while(true){
-			try{
-				if(server == null){
+		while (true) {
+			try {
+				if (server == null) {
 					server = new ServerSocket(port);
-					if(log != null)
+					if (log != null)
 						log.println("Initialising webserver...");
 				}
 
 				final Socket client = server.accept();
-				new Thread(){
-					public void run(){
-						while(true){
-							try{
-
+				new Thread() {
+					public void run() {
+						while (true) {
+							try {
 								Data data = null;
 								int count = 0;
-								while((data = new Data(client.getInputStream(), false)).size() == 0 && count++ < 100){
+								while ((data = new Data(client.getInputStream(), false)).size() == 0 && count++ < 100) {
 									Thread.sleep(10);
 								}
 
-								String request = "";
+								String request = null;
 								boolean keepAlive = false;
 
-								for(String s : data.getAsString().split("\n"))
-									if(s.startsWith("GET"))
+								for (String s : data.getAsString().split("\n"))
+									if (s.startsWith("GET"))
 										request = s.substring(5).replace(" HTTP/1.1", "").trim();
-								
-								if(data.getAsString().contains("keep-alive"))
-										keepAlive = true;
 
-								if(log != null)
+								if (data.getAsString().contains("keep-alive"))
+									keepAlive = true;
+
+								if (log != null)
 									log.println(client + " requested " + data.getAsString() + ", " + data.toArray().length + " bytes");
-								for(Function func : onMessage){
-									try{
-										byte[] returnedData = (byte[]) func.invoke(client, data.toArray(), request);
-										if(log != null)
-											log.println(func.getFunction().getDeclaringClass() + "." + func.getFunction().getName() + " returned " + returnedData.length + " bytes");
-										if(returnedData == null || returnedData.length == 0)
-											continue;
-										client.getOutputStream().write(returnedData);
-										client.getOutputStream().write("\n".getBytes());
+
+								if (request != null) {
+
+									String type = "text/html";
+									for (Function func : dataResponse) {
+										try {
+											String responseType = (String) func.invoke(client, data.toArray(), request);
+											if (log != null)
+												log.println(func.getFunction().getDeclaringClass() + "." + func.getFunction().getName() + " says that we're returning " + responseType);
+											if(responseType != null)
+												type = responseType;
+										} catch (Throwable th) {
+											if (log != null)
+												th.printStackTrace(log);
+										}
 									}
-									catch(Throwable th){
-										if(log != null)
-											th.printStackTrace(log);
+
+									if (!keepAlive) {
+										client.getOutputStream().write(("HTTP/1.1 200 OK\n" +
+												"Content-Type: " + type + "; charset=UTF-8\n" +
+												"Content-Encoding: UTF-8\n").getBytes());
+										client.getOutputStream().write("Connection: close\n\n".getBytes());
+									} else {
+										client.getOutputStream().write(("HTTP/1.1 200 OK\n" +
+												"Content-Type: " + type + "; charset=UTF-8\n" +
+												"Content-Encoding: UTF-8\n\n").getBytes());
+									}
+
+									for (Function func : onMessage) {
+										try {
+											byte[] returnedData = (byte[]) func.invoke(client, data.toArray(), request);
+											if (log != null)
+												log.println(func.getFunction().getDeclaringClass() + "." + func.getFunction().getName() + " returned " + returnedData.length + " bytes");
+											if (returnedData == null || returnedData.length == 0)
+												continue;
+											client.getOutputStream().write(returnedData);
+											client.getOutputStream().write("\n".getBytes());
+										} catch (Throwable th) {
+											if (log != null)
+												th.printStackTrace(log);
+										}
 									}
 								}
 
-								Thread.sleep(1000);
-
 								client.getOutputStream().flush();
 
-								if(log != null)
+								if (log != null)
 									log.flush();
 
-
-								if(!keepAlive)
+								if (!keepAlive)
 									break;
-							}
-							catch(Throwable th){
-								if(log != null)
+							} catch (Throwable th) {
+								if (log != null)
 									th.printStackTrace(log);
 								th.printStackTrace();
 							}
@@ -144,9 +173,8 @@ public class Webserver implements Runnable{
 						}
 					}
 				}.start();
-			}
-			catch(Throwable th){
-				if(log != null)
+			} catch (Throwable th) {
+				if (log != null)
 					th.printStackTrace(log);
 				th.printStackTrace();
 			}

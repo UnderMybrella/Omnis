@@ -38,9 +38,7 @@ public class WiimoteController extends Thread implements Controller{
 		this.start();
 	}
 
-	public void process(byte[] data){ 
-		
-		System.out.println(Arrays.toString(data));
+	public void process(byte[] data){
 		
 		A_PRESSED = bitMask(data[2], 0x8);
 		B_PRESSED = bitMask(data[2], 0x4);

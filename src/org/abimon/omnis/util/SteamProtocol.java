@@ -61,7 +61,6 @@ public class SteamProtocol {
 			if(headless)
 				System.setProperty("java.awt.headless", "false");
 			Desktop.getDesktop().browse(URI.create(base + url));
-			System.err.println(URI.create(base + url));
 			if(headless)
 				System.setProperty("java.awt.headless", "true");
 		}

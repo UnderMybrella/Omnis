@@ -6,3 +6,17 @@
 .gitignore~
 
 Omnis.jar
+
+.idea/*
+
+logs/*
+
+module_omnis.xml
+
+Omnis.eml
+
+Omnis.iml
+
+Omnis.properties
+
+Omnis.xml

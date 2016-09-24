@@ -13,7 +13,6 @@ public class Pastebin {
 		this.devKey = devKey;
 		if(!username.equals(""))
 			this.usrKey = new Website("http://pastebin.com/api/api_login.php").postData(new POST().put("api_dev_key", devKey).put("api_user_name", username).put("api_user_password", password)).getAsString();
-		System.out.println(usrKey);
 	}
 
 	public String newPaste(String title, String content){
